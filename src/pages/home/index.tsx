@@ -14,7 +14,7 @@ const HomePage = () => {
             <CompanyCard />
             <div style={{ margin: 50 }}></div>
             <Divider />
-            <JobCard />
+            {/* <JobCard />  */}
         </div>
     )
 }

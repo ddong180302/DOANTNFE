@@ -12,6 +12,7 @@ interface IState {
     },
     result: IUser[]
 }
+
 // First, create the thunk
 export const fetchUser = createAsyncThunk(
     'user/fetchUser',

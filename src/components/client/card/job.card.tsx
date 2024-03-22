@@ -8,9 +8,10 @@ import { isMobile } from 'react-device-detect';
 import { Link, useNavigate } from 'react-router-dom';
 import styles from 'styles/client.module.scss';
 import dayjs from 'dayjs';
+import 'dayjs/locale/vi';
 import relativeTime from 'dayjs/plugin/relativeTime';
 dayjs.extend(relativeTime)
-
+dayjs.locale('vi');
 interface IProps {
     showPagination?: boolean;
 }
@@ -22,7 +23,7 @@ const JobCard = (props: IProps) => {
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
     const [current, setCurrent] = useState(1);
-    const [pageSize, setPageSize] = useState(5);
+    const [pageSize, setPageSize] = useState(4);
     const [total, setTotal] = useState(0);
     const [filter, setFilter] = useState("");
     const [sortQuery, setSortQuery] = useState("sort=-updatedAt");
@@ -45,7 +46,7 @@ const JobCard = (props: IProps) => {
         const res = await callFetchJob(query);
         if (res && res.data) {
             setDisplayJob(res.data.result);
-            setTotal(res.data.meta.total)
+            setTotal(res.data.meta.total);
         }
         setIsLoading(false)
     }

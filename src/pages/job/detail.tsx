@@ -1,7 +1,7 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { useState, useEffect } from 'react';
-import { IJob } from "@/types/backend";
-import { callFetchJobById } from "@/config/api";
+import { ICompany, IJob } from "@/types/backend";
+import { callFetchCompanyById, callFetchJobById } from "@/config/api";
 import styles from 'styles/client.module.scss';
 import parse from 'html-react-parser';
 import { Col, Divider, Row, Skeleton, Tag } from "antd";
@@ -15,6 +15,7 @@ dayjs.extend(relativeTime)
 
 const ClientJobDetailPage = (props: any) => {
     const [jobDetail, setJobDetail] = useState<IJob | null>(null);
+    const [companyDetail, setCompanyDetail] = useState<ICompany | null>(null);
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
@@ -22,6 +23,7 @@ const ClientJobDetailPage = (props: any) => {
     let location = useLocation();
     let params = new URLSearchParams(location.search);
     const id = params?.get("id"); // job id
+
 
     useEffect(() => {
         const init = async () => {
@@ -33,9 +35,36 @@ const ClientJobDetailPage = (props: any) => {
                 }
                 setIsLoading(false)
             }
+            if (jobDetail?.company?._id) {
+                const idCom = jobDetail?.company?._id;
+                setIsLoading(true)
+                const resCom = await callFetchCompanyById(idCom);
+                if (resCom?.data) {
+                    setCompanyDetail(resCom?.data);
+                }
+                setIsLoading(false)
+            }
         }
         init();
     }, [id]);
+
+    useEffect(() => {
+        const init = async () => {
+            if (jobDetail?.company?._id) {
+                const idCom = jobDetail?.company?._id;
+                setIsLoading(true)
+                const resCom = await callFetchCompanyById(idCom);
+                if (resCom?.data) {
+                    setCompanyDetail(resCom?.data);
+                }
+                setIsLoading(false)
+            }
+        }
+        init();
+    }, [jobDetail?.company?._id]);
+
+
+    console.log("Check job: ", companyDetail);
 
     return (
         <div className={`${styles["container"]} ${styles["detail-job-section"]}`}>
@@ -45,7 +74,7 @@ const ClientJobDetailPage = (props: any) => {
                 <Row gutter={[20, 20]}>
                     {jobDetail && jobDetail._id &&
                         <>
-                            <Col span={24} md={16}>
+                            <Col className={styles["left-col"]} span={24} md={16}>
                                 <div className={styles["header"]}>
                                     {jobDetail.name}
                                 </div>
@@ -53,7 +82,7 @@ const ClientJobDetailPage = (props: any) => {
                                     <button
                                         onClick={() => setIsModalOpen(true)}
                                         className={styles["btn-apply"]}
-                                    >Apply Now</button>
+                                    >Ứng Tuyển</button>
                                 </div>
                                 <Divider />
                                 <div className={styles["skills"]}>
@@ -79,19 +108,26 @@ const ClientJobDetailPage = (props: any) => {
                                 {parse(jobDetail.description)}
                             </Col>
 
-                            <Col span={24} md={8}>
-                                <div className={styles["company"]}>
-                                    <div>
-                                        <img
-                                            alt="example"
-                                            src={`${import.meta.env.VITE_BACKEND_URL}/images/company/${jobDetail.company?.logo}`}
-                                        />
+                            {companyDetail && companyDetail._id &&
+                                <Col span={24} md={8}>
+                                    <div className={styles["company"]}>
+                                        <div>
+                                            <img
+                                                alt="example"
+                                                src={`${import.meta.env.VITE_BACKEND_URL}/images/company/${jobDetail.company?.logo}`}
+                                            />
+                                        </div>
+                                        <div>
+                                            {companyDetail?.name}
+                                        </div>
+                                        <Divider />
+                                        <div>
+                                            {companyDetail?.address}
+                                        </div>
+                                        {parse(companyDetail.description)}
                                     </div>
-                                    <div>
-                                        {jobDetail.company?.name}
-                                    </div>
-                                </div>
-                            </Col>
+                                </Col>
+                            }
                         </>
                     }
                 </Row>

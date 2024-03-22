@@ -1,6 +1,6 @@
 import { CheckSquareOutlined, LoadingOutlined, PlusOutlined } from "@ant-design/icons";
-import { FooterToolbar, ModalForm, ProCard, ProFormText, ProFormTextArea } from "@ant-design/pro-components";
-import { Col, ConfigProvider, Form, Modal, Row, Upload, message, notification } from "antd";
+import { FooterToolbar, ModalForm, ProCard, ProFormSelect, ProFormText, ProFormTextArea } from "@ant-design/pro-components";
+import { Col, ConfigProvider, Form, Modal, Row, Select, Upload, message, notification } from "antd";
 import 'styles/reset.scss';
 import { isMobile } from 'react-device-detect';
 import ReactQuill from 'react-quill';
@@ -10,6 +10,8 @@ import { callCreateCompany, callUpdateCompany, callUploadSingleFile } from "@/co
 import { ICompany } from "@/types/backend";
 import { v4 as uuidv4 } from 'uuid';
 import enUS from 'antd/lib/locale/en_US';
+import countryList, { Country } from 'country-list';
+import { SKILLS_LIST } from "@/config/utils";
 
 interface IProps {
     openModal: boolean;
@@ -22,6 +24,12 @@ interface IProps {
 interface ICompanyForm {
     name: string;
     address: string;
+    country: string;
+    companyType: string;
+    companySize: string;
+    workingDays: string;
+    overtimePolicy: string;
+    ourkeyskills: string[];
 }
 
 interface ICompanyLogo {
@@ -44,6 +52,18 @@ const ModalCompany = (props: IProps) => {
     const [value, setValue] = useState<string>("");
     const [form] = Form.useForm();
 
+    const countries: Country[] = countryList.getData();
+    const renderCountryOptions = () => {
+        return countries.map((country: Country) => ( // Chỉ định kiểu cho country
+            <Select.Option key={country.code} value={country.name}>
+                {country.name}
+            </Select.Option>
+        ));
+    };
+
+    const filterCountryOption = (inputValue: string, option: any) =>
+        option.children.toLowerCase().indexOf(inputValue.toLowerCase()) >= 0;
+
     useEffect(() => {
         if (dataInit?._id && dataInit?.description) {
             setValue(dataInit.description);
@@ -51,7 +71,16 @@ const ModalCompany = (props: IProps) => {
     }, [dataInit])
 
     const submitCompany = async (valuesForm: ICompanyForm) => {
-        const { name, address } = valuesForm;
+        const {
+            name, address, companyType,
+            companySize, workingDays,
+            overtimePolicy, ourkeyskills
+        } = valuesForm;
+
+        console.log('Check skills: ', ourkeyskills);
+        const country = form.getFieldValue('country');
+        console.log('Giá trị của Quốc gia:', country);
+        console.log("check value: ", value);
 
         if (dataLogo.length === 0) {
             message.error('Vui lòng upload ảnh Logo')
@@ -60,7 +89,7 @@ const ModalCompany = (props: IProps) => {
 
         if (dataInit?._id) {
             //update
-            const res = await callUpdateCompany(dataInit._id, name, address, value, dataLogo[0].name);
+            const res = await callUpdateCompany(dataInit._id, name, address, country, companyType, companySize, workingDays, overtimePolicy, ourkeyskills, value, dataLogo[0].name);
             if (res.data) {
                 message.success("Cập nhật company thành công");
                 handleReset();
@@ -73,7 +102,7 @@ const ModalCompany = (props: IProps) => {
             }
         } else {
             //create
-            const res = await callCreateCompany(name, address, value, dataLogo[0].name);
+            const res = await callCreateCompany(name, address, country, companyType, companySize, workingDays, overtimePolicy, ourkeyskills, value, dataLogo[0].name);
             if (res.data) {
                 message.success("Thêm mới company thành công");
                 handleReset();
@@ -269,7 +298,70 @@ const ModalCompany = (props: IProps) => {
                                     }}
                                 />
                             </Col>
+                            <Col span={8}>
+                                <Form.Item
+                                    label="Quốc gia"
+                                    name="country"
+                                    rules={[{ required: true, message: 'Vui lòng chọn quốc gia' }]}
+                                >
+                                    <Select
+                                        placeholder="Chọn quốc gia"
+                                        showSearch  // Cho phép hiển thị tính năng tìm kiếm
+                                        filterOption={filterCountryOption} // Phương thức tìm kiếm tùy chỉnh
+                                        popupMatchSelectWidth
+                                    >
+                                        {renderCountryOptions()}
+                                    </Select>
+                                </Form.Item>
+                            </Col>
+                            <Col span={8}>
+                                <ProFormText
+                                    label="Company type"
+                                    name="companyType"
+                                    rules={[{ required: true, message: 'Vui lòng không bỏ trống' }]}
+                                    placeholder="Nhập Company Type"
+                                />
+                            </Col>
+                            <Col span={8}>
+                                <ProFormText
+                                    label="Company Size"
+                                    name="companySize"
+                                    rules={[{ required: true, message: 'Vui lòng không bỏ trống' }]}
+                                    placeholder="Nhập Company Size"
+                                />
+                            </Col>
+                            <Col span={8}>
+                                <ProFormText
+                                    label="Working Days"
+                                    name="workingDays"
+                                    rules={[{ required: true, message: 'Vui lòng không bỏ trống' }]}
+                                    placeholder="Nhập Working Days"
+                                />
+                            </Col>
 
+                            <Col span={8}>
+                                <ProFormText
+                                    label="Overtime Policy"
+                                    name="overtimePolicy"
+                                    rules={[{ required: true, message: 'Vui lòng không bỏ trống' }]}
+                                    placeholder="Nhập Overtime Policy"
+                                />
+                            </Col>
+                            <Col span={24} md={6}>
+                                <ProFormSelect
+                                    name="ourkeyskills"
+                                    label="Kỹ năng yêu cầu"
+                                    options={SKILLS_LIST}
+                                    placeholder="Please select a Ourkeyskills"
+                                    rules={[{ required: true, message: 'Vui lòng chọn kỹ năng!' }]}
+                                    allowClear
+                                    mode="multiple"
+                                    fieldProps={{
+                                        showArrow: false
+                                    }}
+
+                                />
+                            </Col>
                             <ProCard
                                 title="Miêu tả"
                                 // subTitle="mô tả công ty"

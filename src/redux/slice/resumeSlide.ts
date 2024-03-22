@@ -1,6 +1,7 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { callFetchJob, callFetchResume } from '@/config/api';
+import { callFetchJob, callFetchResume, callFetchResumeByHr } from '@/config/api';
 import { IResume } from '@/types/backend';
+import { useAppSelector } from '../hooks';
 
 interface IState {
     isFetching: boolean;
@@ -12,11 +13,12 @@ interface IState {
     },
     result: IResume[]
 }
+
 // First, create the thunk
 export const fetchResume = createAsyncThunk(
     'resume/fetchResume',
     async ({ query }: { query: string }) => {
-        const response = await callFetchResume(query);
+        const response = await callFetchResumeByHr(query);
         return response;
     }
 )

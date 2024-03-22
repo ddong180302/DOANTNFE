@@ -3,7 +3,7 @@ import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { IJob } from "@/types/backend";
 import { DeleteOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
 import { ActionType, ProColumns, ProFormSelect } from '@ant-design/pro-components';
-import { Button, Popconfirm, Select, Space, Tag, message, notification } from "antd";
+import { Button, Popconfirm, Space, Tag, message, notification } from "antd";
 import { useState, useRef } from 'react';
 import dayjs from 'dayjs';
 import { callDeleteJob } from "@/config/api";
@@ -58,6 +58,11 @@ const JobPage = () => {
         {
             title: 'Tên Job',
             dataIndex: 'name',
+            sorter: true,
+        },
+        {
+            title: 'Tên công ty',
+            dataIndex: ['company', 'name'],
             sorter: true,
         },
         {

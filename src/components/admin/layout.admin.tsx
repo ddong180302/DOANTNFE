@@ -12,6 +12,7 @@ import {
     HeartTwoTone,
     BugOutlined,
     ScheduleOutlined,
+    HomeOutlined,
 } from '@ant-design/icons';
 import { Layout, Menu, Dropdown, Space, message, Avatar, Button } from 'antd';
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
@@ -108,9 +109,11 @@ const LayoutAdmin = () => {
                     key: '/admin/role',
                     icon: <ExceptionOutlined />
                 }] : []),
-
-
-
+                {
+                    label: <Link to='/'>Home</Link>,
+                    key: '/',
+                    icon: <HomeOutlined />
+                },
             ];
 
             setMenuItems(full);
@@ -201,7 +204,7 @@ const LayoutAdmin = () => {
 
                             <Dropdown menu={{ items: itemsDropdown }} trigger={['click']}>
                                 <Space style={{ cursor: "pointer" }}>
-                                    Welcome {user?.name}
+                                    {user?.name}
                                     <Avatar> {user?.name?.substring(0, 2)?.toUpperCase()} </Avatar>
 
                                 </Space>

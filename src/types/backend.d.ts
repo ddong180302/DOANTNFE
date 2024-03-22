@@ -41,8 +41,14 @@ export interface ICompany {
     _id?: string;
     name?: string;
     address?: string;
-    logo: string;
-    description?: string;
+    country?: string;
+    companyType?: string;
+    companySize?: string;
+    workingDays?: string;
+    overtimePolicy?: string;
+    ourkeyskills?: string[];
+    logo?: string;
+    description: string;
     createdBy?: string;
     isDeleted?: boolean;
     deletedAt?: boolean | null;
@@ -60,6 +66,7 @@ export interface IUser {
     age: number;
     gender: string;
     address: string;
+    phone: string;
     role?: {
         _id: string;
         name: string;

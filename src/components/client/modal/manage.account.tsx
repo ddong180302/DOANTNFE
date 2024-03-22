@@ -59,7 +59,7 @@ const UserResume = (props: any) => {
             dataIndex: "status",
         },
         {
-            title: 'Ngày rải CV',
+            title: 'Ngày Gởi CV',
             dataIndex: "createdAt",
             render(value, record, index) {
                 return (
@@ -96,7 +96,15 @@ const UserResume = (props: any) => {
 const UserUpdateInfo = (props: any) => {
     return (
         <div>
-            //todo
+            Cập nhật thông tin cá nhân!
+        </div>
+    )
+}
+
+const UserResetPassword = (props: any) => {
+    return (
+        <div>
+            Thay đổi mật khẩu!
         </div>
     )
 }
@@ -159,6 +167,7 @@ const JobByEmail = (props: any) => {
                                 }
                                 optionLabelProp="label"
                                 options={SKILLS_LIST}
+                                popupMatchSelectWidth
                             />
                         </Form.Item>
                     </Col>
@@ -181,7 +190,7 @@ const ManageAccount = (props: IProps) => {
     const items: TabsProps['items'] = [
         {
             key: 'user-resume',
-            label: `Rải CV`,
+            label: `Gởi CV`,
             children: <UserResume />,
         },
         {
@@ -197,7 +206,7 @@ const ManageAccount = (props: IProps) => {
         {
             key: 'user-password',
             label: `Thay đổi mật khẩu`,
-            children: `//todo`,
+            children: <UserResetPassword />,
         },
     ];
 

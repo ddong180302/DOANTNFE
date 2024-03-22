@@ -24,6 +24,7 @@ const ViewUpsertJob = (props: any) => {
     let params = new URLSearchParams(location.search);
     const id = params?.get("id"); // job id
     const [dataUpdate, setDataUpdate] = useState<IJob | null>(null);
+    console.log("check data update: ", dataUpdate);
     const [form] = Form.useForm();
 
     useEffect(() => {
@@ -269,7 +270,6 @@ const ViewUpsertJob = (props: any) => {
                                             style={{ width: '100%' }}
                                         />
                                     </ProForm.Item>
-
                                 </Col>
                             }
 

@@ -11,6 +11,7 @@ import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 import { callLogout } from '@/config/api';
 import { setLogoutAction } from '@/redux/slice/accountSlide';
 import ManageAccount from './modal/manage.account';
+import logo from '../../../public/logo/logo.jpg';
 
 const Header = (props: any) => {
     const navigate = useNavigate();
@@ -18,6 +19,8 @@ const Header = (props: any) => {
 
     const isAuthenticated = useAppSelector(state => state.account.isAuthenticated);
     const user = useAppSelector(state => state.account.user);
+    const userRole = user?.role?.name;
+    const isNormal_User = "NORMAL_USER";
     const [openMobileMenu, setOpenMobileMenu] = useState<boolean>(false);
 
     const [current, setCurrent] = useState('home');
@@ -64,20 +67,22 @@ const Header = (props: any) => {
 
     const itemsDropdown = [
         {
-            label: <label
-                style={{ cursor: 'pointer' }}
-                onClick={() => setOpenManageAccount(true)}
-            >Quản lý tài khoản</label>,
+            label:
+                <label
+                    style={{ cursor: 'pointer' }}
+                    onClick={() => setOpenManageAccount(true)}>
+                    Quản lý tài khoản
+                </label>,
             key: 'manage-account',
             icon: <ContactsOutlined />
-        },
-        {
+        }, {
             label: <Link
                 to={"/admin"}
             >Trang Quản Trị</Link>,
             key: 'admin',
             icon: <DashOutlined />
-        },
+        }
+        ,
         {
             label: <label
                 style={{ cursor: 'pointer' }}
@@ -97,7 +102,7 @@ const Header = (props: any) => {
                     {!isMobile ?
                         <div style={{ display: "flex", gap: 30 }}>
                             <div className={styles['brand']} >
-                                <FaReact onClick={() => navigate('/')} title='Hỏi Dân IT' />
+                                {/* <FaReact onClick={() => navigate('/')} title='Nice Job' /> */}
                             </div>
                             <div className={styles['top-menu']}>
                                 <ConfigProvider
@@ -123,12 +128,11 @@ const Header = (props: any) => {
                                         :
                                         <Dropdown menu={{ items: itemsDropdown }} trigger={['click']}>
                                             <Space style={{ cursor: "pointer" }}>
-                                                <span>Welcome {user?.name}</span>
+                                                <span>{user?.name}</span>
                                                 <Avatar> {user?.name?.substring(0, 2)?.toUpperCase()} </Avatar>
                                             </Space>
                                         </Dropdown>
                                     }
-
                                 </div>
 
                             </div>

@@ -5,12 +5,24 @@ import axios from 'config/axios-customize';
  * 
 Module Auth
  */
-export const callRegister = (name: string, email: string, password: string, age: number, gender: string, address: string) => {
-    return axios.post<IBackendRes<IUser>>('/api/v1/auth/register', { name, email, password, age, gender, address })
+export const callRegister = (name: string, email: string, password: string, age: number, gender: string, address: string, phone: string) => {
+    return axios.post<IBackendRes<IUser>>('/api/v1/auth/register', { name, email, password, age, gender, address, phone })
 }
 
 export const callLogin = (username: string, password: string) => {
     return axios.post<IBackendRes<IAccount>>('/api/v1/auth/login', { username, password })
+}
+
+export const callConfirm = (_id: string, email: string, codeConfirm: string) => {
+    return axios.post<IBackendRes<IUser>>('/api/v1/auth/confirm', { _id, email, codeConfirm })
+}
+
+export const callResetPass = (_id: string, email: string, password: string) => {
+    return axios.post<IBackendRes<IUser>>('/api/v1/auth/reset', { _id, email, password })
+}
+
+export const callGetUserByEmail = (email: string) => {
+    return axios.post<IBackendRes<IUser>>('/api/v1/auth/by-email', { email })
 }
 
 export const callFetchAccount = () => {
@@ -49,12 +61,12 @@ export const callUploadSingleFile = (file: any, folderType: string) => {
  * 
 Module Company
  */
-export const callCreateCompany = (name: string, address: string, description: string, logo: string) => {
-    return axios.post<IBackendRes<ICompany>>('/api/v1/companies', { name, address, description, logo })
+export const callCreateCompany = (name: string, address: string, country: string, companyType: string, companySize: string, workingDays: string, overtimePolicy: string, ourkeyskills: string[], description: string, logo: string) => {
+    return axios.post<IBackendRes<ICompany>>('/api/v1/companies', { name, address, country, companyType, companySize, workingDays, overtimePolicy, ourkeyskills, description, logo })
 }
 
-export const callUpdateCompany = (id: string, name: string, address: string, description: string, logo: string) => {
-    return axios.patch<IBackendRes<ICompany>>(`/api/v1/companies/${id}`, { name, address, description, logo })
+export const callUpdateCompany = (id: string, name: string, address: string, country: string, companyType: string, companySize: string, workingDays: string, overtimePolicy: string, ourkeyskills: string[], description: string, logo: string) => {
+    return axios.patch<IBackendRes<ICompany>>(`/api/v1/companies/${id}`, { name, address, country, companyType, companySize, workingDays, overtimePolicy, ourkeyskills, description, logo })
 }
 
 export const callDeleteCompany = (id: string) => {
@@ -110,6 +122,10 @@ export const callFetchJob = (query: string) => {
     return axios.get<IBackendRes<IModelPaginate<IJob>>>(`/api/v1/jobs?${query}`);
 }
 
+export const callFetchJobByHr = (query: string) => {
+    return axios.get<IBackendRes<IModelPaginate<IJob>>>(`/api/v1/jobs/by-hr?${query}`);
+}
+
 export const callFetchJobById = (id: string) => {
     return axios.get<IBackendRes<IJob>>(`/api/v1/jobs/${id}`);
 }
@@ -132,6 +148,10 @@ export const callDeleteResume = (id: string) => {
 
 export const callFetchResume = (query: string) => {
     return axios.get<IBackendRes<IModelPaginate<IResume>>>(`/api/v1/resumes?${query}`);
+}
+
+export const callFetchResumeByHr = (query: string) => {
+    return axios.get<IBackendRes<IModelPaginate<IResume>>>(`/api/v1/resumes/by-hr?${query}`);
 }
 
 export const callFetchResumeById = (id: string) => {

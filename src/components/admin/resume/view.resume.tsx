@@ -73,6 +73,7 @@ const ViewDetailResume = (props: IProps) => {
                                     // placeholder="Select a option and change input text above"
                                     // onChange={onGenderChange}
                                     // allowClear
+                                    popupMatchSelectWidth
                                     style={{ width: "100%" }}
                                     defaultValue={dataInit?.status}
                                 >

@@ -2,16 +2,33 @@ import { grey, green, blue, red, orange } from '@ant-design/colors';
 
 export const SKILLS_LIST =
     [
-        { label: "React.JS", value: "REACT.JS" },
+        { label: "ReactJS", value: "REACTJS" },
         { label: "React Native", value: "REACT NATIVE" },
-        { label: "Vue.JS", value: "VUE.JS" },
+        { label: "VueJS", value: "VUEJS" },
         { label: "Angular", value: "ANGULAR" },
-        { label: "Nest.JS", value: "NEST.JS" },
+        { label: "NestJS", value: "NESTJS" },
         { label: "TypeScript", value: "TYPESCRIPT" },
         { label: "Java", value: "JAVA" },
         { label: "Frontend", value: "FRONTEND" },
         { label: "Backend", value: "BACKEND" },
-        { label: "Fullstack", value: "FULLSTACK" }
+        { label: "Fullstack", value: "FULLSTACK" },
+        { label: "Android", value: "ANDROID" },
+        { label: "MySQL", value: "MYSQL" },
+        { label: "SQL", value: "SQL" },
+        { label: "Database", value: "DATABASE" },
+        { label: "Golang", value: "GOLANG" },
+        { label: "PHP", value: "PHP" },
+        { label: ".NET", value: ".NET" },
+        { label: "AWS", value: "AWS" },
+        { label: "IOS", value: "IOS" },
+        { label: "C#", value: "C#" },
+        { label: "HTML5", value: "HTML5" },
+        { label: "CSS/SCSS", value: "CSS/SCSS" },
+        { label: "C/C++", value: "C/C++" },
+        { label: "Python", value: "PYTHON" },
+        { label: "NodeJS", value: "NODEJS" },
+        { label: "OOP", value: "OOP" },
+        { label: "Tester", value: "TESTER" },
     ];
 
 export const LOCATION_LIST =

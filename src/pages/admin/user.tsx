@@ -53,12 +53,16 @@ const UserPage = () => {
             render: (text, record, index, action) => {
                 return (
                     <a href="#" onClick={() => {
-                        setOpenViewDetail(true);
-                        setDataInit(record);
+                        if (record && record._id) {
+                            setOpenViewDetail(true);
+                            setDataInit(record);
+                        } else {
+                            console.log("Invalid record:", record);
+                        }
                     }}>
                         {record._id}
                     </a>
-                )
+                );
             },
             hideInSearch: true,
         },
@@ -98,10 +102,9 @@ const UserPage = () => {
             hideInSearch: true,
         },
         {
-
             title: 'Actions',
             hideInSearch: true,
-            width: 50,
+            width: 100,
             render: (_value, entity, _index, _action) => (
                 <Space>
                     <Access
@@ -113,14 +116,12 @@ const UserPage = () => {
                                 fontSize: 20,
                                 color: '#ffa500',
                             }}
-                            type=""
                             onClick={() => {
                                 setOpenModal(true);
                                 setDataInit(entity);
                             }}
                         />
                     </Access>
-
                     <Access
                         permission={ALL_PERMISSIONS.USERS.DELETE}
                         hideChildren

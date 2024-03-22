@@ -39,19 +39,68 @@ const ClientCompanyDetailPage = (props: any) => {
                     {companyDetail && companyDetail._id &&
                         <>
                             <Col span={24} md={16}>
-                                <div className={styles["header"]}>
-                                    {companyDetail.name}
+                                <div style={{ background: "#ddd", padding: "20px", borderRadius: "5px", margin: "20px 0" }}>
+                                    <div className={styles["header"]}>
+                                        {companyDetail.name}
+                                    </div>
+
+                                    <div className={styles["location"]}>
+                                        <EnvironmentOutlined style={{ color: '#58aaab' }} />&nbsp;{(companyDetail?.address)}
+                                    </div>
                                 </div>
 
-                                <div className={styles["location"]}>
-                                    <EnvironmentOutlined style={{ color: '#58aaab' }} />&nbsp;{(companyDetail?.address)}
+                                <div style={{ background: "#ddd", padding: "20px", borderRadius: "5px", margin: "20px 0" }}>
+                                    <div className={styles["header"]}>
+                                        Giới thiệu công ty
+                                    </div>
+                                    <Divider />
+                                    <div>
+                                        <div>
+                                            <div>
+                                                Mô hình công ty
+                                            </div>
+                                            {companyDetail?.companyType}
+                                        </div>
+                                        <div>
+                                            <div>
+                                                Quy mô công ty
+                                            </div>
+                                            {companyDetail?.companySize}
+                                        </div>
+
+                                        <div>
+                                            <div>
+                                                Quốc gia
+                                            </div>
+                                            {companyDetail?.country}
+                                        </div>
+                                        <div>
+                                            <div>
+                                                Thời gian làm việc
+                                            </div>
+                                            {companyDetail?.workingDays}
+                                        </div>
+                                        <div>
+                                            <div>
+                                                Làm việc ngoài giờ
+                                            </div>
+                                            {companyDetail?.overtimePolicy}
+                                        </div>
+                                    </div>
                                 </div>
 
-                                <Divider />
-                                {parse(companyDetail?.description ?? "")}
+                                <div style={{ background: "#ddd", padding: "20px", borderRadius: "5px" }}>
+                                    <div className={styles["header"]}>
+                                        Thông tin chung
+                                    </div>
+                                    <Divider />
+                                    {parse(companyDetail?.description ?? "")}
+                                </div>
+
+
                             </Col>
 
-                            <Col span={24} md={8}>
+                            <Col style={{ background: "#ddd", padding: "20px", borderRadius: "5px", marginTop: "20px" }} span={24} md={8}>
                                 <div className={styles["company"]}>
                                     <div>
                                         <img

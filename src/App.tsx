@@ -30,6 +30,8 @@ import ClientJobPage from './pages/job';
 import ClientJobDetailPage from './pages/job/detail';
 import ClientCompanyPage from './pages/company';
 import ClientCompanyDetailPage from './pages/company/detail';
+import ConfirmPage from './pages/auth/confirm';
+import ForgotPage from './pages/auth/forgot';
 
 const LayoutClient = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -63,6 +65,8 @@ export default function App() {
     if (
       window.location.pathname === '/login'
       || window.location.pathname === '/register'
+      || window.location.pathname === '/forget'
+
     )
       return;
     dispatch(fetchAccount())
@@ -151,10 +155,13 @@ export default function App() {
       path: "/login",
       element: <LoginPage />,
     },
-
     {
       path: "/register",
       element: <RegisterPage />,
+    },
+    {
+      path: "/forgot",
+      element: <ForgotPage />,
     },
   ]);
 
