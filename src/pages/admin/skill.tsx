@@ -1,36 +1,36 @@
 import DataTable from "@/components/client/data-table";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
-import { fetchUser } from "@/redux/slice/userSlide";
-import { IUser } from "@/types/backend";
+import { fetchSkill } from "@/redux/slice/skillSlide";
+import { ISkill } from "@/types/backend";
 import { DeleteOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
 import { ActionType, ProColumns } from '@ant-design/pro-components';
 import { Button, Popconfirm, Space, message, notification } from "antd";
 import { useState, useRef } from 'react';
 import dayjs from 'dayjs';
-import { callDeleteUser } from "@/config/api";
+import { callDeleteSkill } from "@/config/api";
 import queryString from 'query-string';
-import ModalUser from "@/components/admin/user/modal.user";
-import ViewDetailUser from "@/components/admin/user/view.user";
+import ModalSkill from "@/components/admin/skill/modal.skill";
 import Access from "@/components/share/access";
 import { ALL_PERMISSIONS } from "@/config/permissions";
+import ViewDetailSkill from "@/components/admin/skill/view.user";
 
-const UserPage = () => {
+const SkillPage = () => {
     const [openModal, setOpenModal] = useState<boolean>(false);
-    const [dataInit, setDataInit] = useState<IUser | null>(null);
+    const [dataInit, setDataInit] = useState<ISkill | null>(null);
     const [openViewDetail, setOpenViewDetail] = useState<boolean>(false);
 
     const tableRef = useRef<ActionType>();
 
-    const isFetching = useAppSelector(state => state.user.isFetching);
-    const meta = useAppSelector(state => state.user.meta);
-    const users = useAppSelector(state => state.user.result);
+    const isFetching = useAppSelector(state => state.skill.isFetching);
+    const meta = useAppSelector(state => state.skill.meta);
+    const skills = useAppSelector(state => state.skill.result);
     const dispatch = useAppDispatch();
 
-    const handleDeleteUser = async (_id: string | undefined) => {
+    const handleDeleteSkill = async (_id: string | undefined) => {
         if (_id) {
-            const res = await callDeleteUser(_id);
+            const res = await callDeleteSkill(_id);
             if (res && res.data) {
-                message.success('Xóa User thành công');
+                message.success('Xóa Skill thành công');
                 reloadTable();
             } else {
                 notification.error({
@@ -45,7 +45,7 @@ const UserPage = () => {
         tableRef?.current?.reload();
     }
 
-    const columns: ProColumns<IUser>[] = [
+    const columns: ProColumns<ISkill>[] = [
         {
             title: 'Id',
             dataIndex: '_id',
@@ -69,17 +69,6 @@ const UserPage = () => {
         {
             title: 'Name',
             dataIndex: 'name',
-            sorter: true,
-        },
-        {
-            title: 'Email',
-            dataIndex: 'email',
-            sorter: true,
-        },
-
-        {
-            title: 'Vai trò',
-            dataIndex: ["role", "name"],
             sorter: true,
         },
 
@@ -114,7 +103,7 @@ const UserPage = () => {
             render: (_value, entity, _index, _action) => (
                 <Space>
                     <Access
-                        permission={ALL_PERMISSIONS.USERS.UPDATE}
+                        permission={ALL_PERMISSIONS.SKILLS.UPDATE}
                         hideChildren
                     >
                         <EditOutlined
@@ -129,14 +118,14 @@ const UserPage = () => {
                         />
                     </Access>
                     <Access
-                        permission={ALL_PERMISSIONS.USERS.DELETE}
+                        permission={ALL_PERMISSIONS.SKILLS.DELETE}
                         hideChildren
                     >
                         <Popconfirm
                             placement="leftTop"
-                            title={"Xác nhận xóa user"}
-                            description={"Bạn có chắc chắn muốn xóa user này ?"}
-                            onConfirm={() => handleDeleteUser(entity._id)}
+                            title={"Xác nhận xóa skill"}
+                            description={"Bạn có chắc chắn muốn xóa skill này ?"}
+                            onConfirm={() => handleDeleteSkill(entity._id)}
                             okText="Xác nhận"
                             cancelText="Hủy"
                         >
@@ -159,7 +148,6 @@ const UserPage = () => {
     const buildQuery = (params: any, sort: any, filter: any) => {
         const clone = { ...params };
         if (clone.name) clone.name = `/${clone.name}/i`;
-        if (clone.email) clone.email = `/${clone.email}/i`;
 
         let temp = queryString.stringify(clone);
 
@@ -167,9 +155,7 @@ const UserPage = () => {
         if (sort && sort.name) {
             sortBy = sort.name === 'ascend' ? "sort=name" : "sort=-name";
         }
-        if (sort && sort.email) {
-            sortBy = sort.email === 'ascend' ? "sort=email" : "sort=-email";
-        }
+
         if (sort && sort.createdAt) {
             sortBy = sort.createdAt === 'ascend' ? "sort=createdAt" : "sort=-createdAt";
         }
@@ -183,7 +169,6 @@ const UserPage = () => {
         } else {
             temp = `${temp}&${sortBy}`;
         }
-        temp += "&populate=role&fields=role._id, role.name";
 
         return temp;
     }
@@ -191,18 +176,18 @@ const UserPage = () => {
     return (
         <div>
             <Access
-                permission={ALL_PERMISSIONS.USERS.GET_PAGINATE}
+                permission={ALL_PERMISSIONS.SKILLS.GET_PAGINATE}
             >
-                <DataTable<IUser>
+                <DataTable<ISkill>
                     actionRef={tableRef}
-                    headerTitle="Danh sách Users"
+                    headerTitle="Danh sách Skills"
                     rowKey="_id"
                     loading={isFetching}
                     columns={columns}
-                    dataSource={users}
+                    dataSource={skills}
                     request={async (params, sort, filter): Promise<any> => {
                         const query = buildQuery(params, sort, filter);
-                        dispatch(fetchUser({ query }))
+                        dispatch(fetchSkill({ query }))
                     }}
                     scroll={{ x: true }}
                     pagination={
@@ -228,14 +213,14 @@ const UserPage = () => {
                     }}
                 />
             </Access>
-            <ModalUser
+            <ModalSkill
                 openModal={openModal}
                 setOpenModal={setOpenModal}
                 reloadTable={reloadTable}
                 dataInit={dataInit}
                 setDataInit={setDataInit}
             />
-            <ViewDetailUser
+            <ViewDetailSkill
                 onClose={setOpenViewDetail}
                 open={openViewDetail}
                 dataInit={dataInit}
@@ -245,4 +230,4 @@ const UserPage = () => {
     )
 }
 
-export default UserPage;
+export default SkillPage;

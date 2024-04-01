@@ -1,30 +1,32 @@
 import DataTable from "@/components/client/data-table";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
-import { fetchUser } from "@/redux/slice/userSlide";
-import { IUser } from "@/types/backend";
+import { fetchSubscriber } from "@/redux/slice/subscriberSlide";
+import { ISubscribers } from "@/types/backend";
 import { DeleteOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
 import { ActionType, ProColumns } from '@ant-design/pro-components';
-import { Button, Popconfirm, Space, message, notification } from "antd";
+import { Button, Popconfirm, Space, Tag, message, notification } from "antd";
 import { useState, useRef } from 'react';
 import dayjs from 'dayjs';
 import { callDeleteUser } from "@/config/api";
 import queryString from 'query-string';
-import ModalUser from "@/components/admin/user/modal.user";
-import ViewDetailUser from "@/components/admin/user/view.user";
+// import ModalUser from "@/components/admin/subscriber/modal.subscriber";
+// import ViewDetailUser from "@/components/admin/subscriber/view.subscriber";
 import Access from "@/components/share/access";
 import { ALL_PERMISSIONS } from "@/config/permissions";
 
-const UserPage = () => {
+const SubscriberPage = () => {
     const [openModal, setOpenModal] = useState<boolean>(false);
-    const [dataInit, setDataInit] = useState<IUser | null>(null);
+    const [dataInit, setDataInit] = useState<ISubscribers | null>(null);
     const [openViewDetail, setOpenViewDetail] = useState<boolean>(false);
 
     const tableRef = useRef<ActionType>();
 
-    const isFetching = useAppSelector(state => state.user.isFetching);
-    const meta = useAppSelector(state => state.user.meta);
-    const users = useAppSelector(state => state.user.result);
+    const isFetching = useAppSelector(state => state.subscriber.isFetching);
+    const meta = useAppSelector(state => state.subscriber.meta);
+    const subscribers = useAppSelector(state => state.subscriber.result);
     const dispatch = useAppDispatch();
+
+    console.log("check subs: ", subscribers)
 
     const handleDeleteUser = async (_id: string | undefined) => {
         if (_id) {
@@ -45,7 +47,7 @@ const UserPage = () => {
         tableRef?.current?.reload();
     }
 
-    const columns: ProColumns<IUser>[] = [
+    const columns: ProColumns<ISubscribers>[] = [
         {
             title: 'Id',
             dataIndex: '_id',
@@ -78,9 +80,38 @@ const UserPage = () => {
         },
 
         {
-            title: 'Vai trò',
-            dataIndex: ["role", "name"],
-            sorter: true,
+            // title: 'Kỹ năng',
+            // dataIndex: ["skills"],
+            // sorter: true,
+            // title: 'Kỹ năng',
+            // dataIndex: 'skills',
+            // sorter: true,
+            // render: (skills: string[] | undefined) => (
+            //     <span>
+            //         {Array.isArray(skills) && skills.map(skill => (
+            //             <p key={skill}>{skill}</p>
+            //         ))}
+            //     </span>
+            // ),
+
+            title: 'Skills',
+            key: 'Skills',
+            dataIndex: 'Skills',
+            render: (_, { skills }) => (
+                <>
+                    {skills.map((skill) => {
+                        let color = skill.length > 5 ? 'geekblue' : 'green';
+                        if (skill === 'loser') {
+                            color = 'volcano';
+                        }
+                        return (
+                            <Tag key={skill}>
+                                {skill.toUpperCase()}
+                            </Tag>
+                        );
+                    })}
+                </>
+            ),
         },
 
         {
@@ -134,8 +165,8 @@ const UserPage = () => {
                     >
                         <Popconfirm
                             placement="leftTop"
-                            title={"Xác nhận xóa user"}
-                            description={"Bạn có chắc chắn muốn xóa user này ?"}
+                            title={"Xác nhận xóa subscriber"}
+                            description={"Bạn có chắc chắn muốn xóa subscriber này ?"}
                             onConfirm={() => handleDeleteUser(entity._id)}
                             okText="Xác nhận"
                             cancelText="Hủy"
@@ -183,7 +214,6 @@ const UserPage = () => {
         } else {
             temp = `${temp}&${sortBy}`;
         }
-        temp += "&populate=role&fields=role._id, role.name";
 
         return temp;
     }
@@ -193,16 +223,16 @@ const UserPage = () => {
             <Access
                 permission={ALL_PERMISSIONS.USERS.GET_PAGINATE}
             >
-                <DataTable<IUser>
+                <DataTable<ISubscribers>
                     actionRef={tableRef}
-                    headerTitle="Danh sách Users"
+                    headerTitle="Danh sách Subscriber"
                     rowKey="_id"
                     loading={isFetching}
                     columns={columns}
-                    dataSource={users}
+                    dataSource={subscribers}
                     request={async (params, sort, filter): Promise<any> => {
                         const query = buildQuery(params, sort, filter);
-                        dispatch(fetchUser({ query }))
+                        dispatch(fetchSubscriber({ query }))
                     }}
                     scroll={{ x: true }}
                     pagination={
@@ -228,21 +258,21 @@ const UserPage = () => {
                     }}
                 />
             </Access>
-            <ModalUser
+            {/* <ModalUser
                 openModal={openModal}
                 setOpenModal={setOpenModal}
                 reloadTable={reloadTable}
                 dataInit={dataInit}
                 setDataInit={setDataInit}
-            />
-            <ViewDetailUser
+            /> */}
+            {/* <ViewDetailUser
                 onClose={setOpenViewDetail}
                 open={openViewDetail}
                 dataInit={dataInit}
                 setDataInit={setDataInit}
-            />
+            /> */}
         </div>
     )
 }
 
-export default UserPage;
+export default SubscriberPage;

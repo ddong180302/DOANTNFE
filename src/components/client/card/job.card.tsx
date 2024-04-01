@@ -23,7 +23,7 @@ const JobCard = (props: IProps) => {
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
     const [current, setCurrent] = useState(1);
-    const [pageSize, setPageSize] = useState(4);
+    const [pageSize, setPageSize] = useState(8);
     const [total, setTotal] = useState(0);
     const [filter, setFilter] = useState("");
     const [sortQuery, setSortQuery] = useState("sort=-updatedAt");
@@ -102,7 +102,6 @@ const JobCard = (props: IProps) => {
                                                 <div className={styles["job-updatedAt"]}>{dayjs(item.updatedAt).fromNow()}</div>
                                             </div>
                                         </div>
-
                                     </Card>
                                 </Col>
                             )

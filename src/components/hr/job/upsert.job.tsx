@@ -1,18 +1,19 @@
-import { Breadcrumb, Col, ConfigProvider, Divider, Form, Row, message, notification } from "antd";
+import { Breadcrumb, Col, ConfigProvider, Divider, Form, Input, Row, message, notification } from "antd";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { DebounceSelect } from "../user/debouce.select";
 import { FooterToolbar, ProForm, ProFormDatePicker, ProFormDigit, ProFormSelect, ProFormSwitch, ProFormText } from "@ant-design/pro-components";
 import styles from 'styles/admin.module.scss';
 import { LOCATION_LIST, SKILLS_LIST } from "@/config/utils";
-import { ICompanySelect } from "../user/modal.user";
 import { useState, useEffect } from 'react';
-import { callCreateJob, callFetchCompany, callFetchJobById, callFetchSkill, callUpdateJob } from "@/config/api";
+import { callCreateJob, callFetchCompany, callFetchJobById, callFetchSkill, callGetCompanyByUser, callUpdateJob } from "@/config/api";
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import { CheckSquareOutlined } from "@ant-design/icons";
 import enUS from 'antd/lib/locale/en_US';
 import dayjs from 'dayjs';
 import { IJob } from "@/types/backend";
+import { ICompanySelect } from "@/components/admin/user/modal.user";
+import { DebounceSelect } from "@/components/admin/user/debouce.select";
+import { useAppSelector } from "@/redux/hooks";
 
 export interface ISkillSelect {
     label: string;
@@ -20,10 +21,15 @@ export interface ISkillSelect {
     key?: string;
 }
 
-const ViewUpsertJob = (props: any) => {
+const ViewUpsertJobHr = (props: any) => {
     const [companies, setCompanies] = useState<ICompanySelect[]>([]);
     const [skills, setSkills] = useState<ISkillSelect[]>([]);
+    const user = useAppSelector(state => state.account.user);
+    const [companyName, setCompanyName] = useState<string>();
+    const [companyId, setCompanyId] = useState<string>();
+    const [companyLogo, setCompanyLogo] = useState<string>();
 
+    console.log("check user: ", user);
     const navigate = useNavigate();
     const [value, setValue] = useState<string>("");
 
@@ -32,6 +38,20 @@ const ViewUpsertJob = (props: any) => {
     const id = params?.get("id"); // job id
     const [dataUpdate, setDataUpdate] = useState<IJob | null>(null);
     const [form] = Form.useForm();
+
+    useEffect(() => {
+        const init = async () => {
+            if (user && user?._id) {
+                const res = await callGetCompanyByUser();
+                if (res && res.data) {
+                    setCompanyName(res.data.name);
+                    setCompanyId(res.data._id);
+                    setCompanyLogo(res.data.logo);
+                }
+            }
+        }
+        init();
+    }, [user]);
 
     useEffect(() => {
         const init = async () => {
@@ -137,7 +157,7 @@ const ViewUpsertJob = (props: any) => {
             const res = await callUpdateJob(job, dataUpdate._id);
             if (res.data) {
                 message.success("Cập nhật job thành công");
-                navigate('/admin/job')
+                navigate('/hr/job')
             } else {
                 notification.error({
                     message: 'Có lỗi xảy ra',
@@ -152,9 +172,9 @@ const ViewUpsertJob = (props: any) => {
                 name: values.name,
                 skills: valuesSkill,
                 company: {
-                    _id: cp && cp.length > 0 ? cp[0] : "",
-                    name: values.company.label,
-                    logo: cp && cp.length > 1 ? cp[1] : ""
+                    _id: companyId || "",
+                    name: companyName || "",
+                    logo: companyLogo || ""
                 },
                 location: values.location,
                 salary: values.salary,
@@ -169,7 +189,7 @@ const ViewUpsertJob = (props: any) => {
             const res = await callCreateJob(job);
             if (res.data) {
                 message.success("Tạo mới job thành công");
-                navigate('/admin/job')
+                navigate('/hr/job')
             } else {
                 notification.error({
                     message: 'Có lỗi xảy ra',
@@ -188,7 +208,7 @@ const ViewUpsertJob = (props: any) => {
                     separator=">"
                     items={[
                         {
-                            title: <Link to="/admin/job">Manage Job</Link>,
+                            title: <Link to="/hr/job">Manage Job</Link>,
                         },
                         {
                             title: 'Upsert Job',
@@ -208,7 +228,7 @@ const ViewUpsertJob = (props: any) => {
                                     resetText: "Hủy",
                                     submitText: <>{dataUpdate?._id ? "Cập nhật Job" : "Tạo mới Job"}</>
                                 },
-                                onReset: () => navigate('/admin/job'),
+                                onReset: () => navigate('/hr/job'),
                                 render: (_: any, dom: any) => <FooterToolbar>{dom}</FooterToolbar>,
                                 submitButtonProps: {
                                     icon: <CheckSquareOutlined />
@@ -298,30 +318,17 @@ const ViewUpsertJob = (props: any) => {
                                     rules={[{ required: true, message: 'Vui lòng chọn level!' }]}
                                 />
                             </Col>
-                            {(dataUpdate?._id || !id) &&
-                                <Col span={24} md={6}>
-                                    <ProForm.Item
-                                        name="company"
-                                        label="Thuộc Công Ty"
-                                        rules={[{ required: true, message: 'Vui lòng chọn company!' }]}
-                                    >
-                                        <DebounceSelect
-                                            allowClear
-                                            showSearch
-                                            defaultValue={companies}
-                                            value={companies}
-                                            placeholder="Chọn công ty"
-                                            fetchOptions={fetchCompanyList}
-                                            onChange={(newValue: any) => {
-                                                if (newValue?.length === 0 || newValue?.length === 1) {
-                                                    setCompanies(newValue as ICompanySelect[]);
-                                                }
-                                            }}
-                                            style={{ width: '100%' }}
-                                        />
-                                    </ProForm.Item>
-                                </Col>
-                            }
+                            <Col span={24} md={6} >
+                                <ProForm.Item
+                                    name="company"
+                                    label="Thuộc Công Ty"
+
+                                >
+                                    <p style={{ border: "1px solid #ddd", padding: "4px 5px", borderRadius: "5px" }}>
+                                        {companyName}
+                                    </p>
+                                </ProForm.Item>
+                            </Col>
 
                         </Row>
 
@@ -388,4 +395,4 @@ const ViewUpsertJob = (props: any) => {
     )
 }
 
-export default ViewUpsertJob;
+export default ViewUpsertJobHr;

@@ -11,7 +11,7 @@ import { ICompany } from "@/types/backend";
 import { v4 as uuidv4 } from 'uuid';
 import enUS from 'antd/lib/locale/en_US';
 import countryList, { Country } from 'country-list';
-import { DebounceSelect } from "../user/debouce.select";
+import { DebounceSelect } from "@/components/admin/user/debouce.select";
 
 interface IProps {
     openModal: boolean;
@@ -50,6 +50,7 @@ const ModalCompany = (props: IProps) => {
 
     //modal animation
     const [animation, setAnimation] = useState<string>('open');
+
     const [loadingUpload, setLoadingUpload] = useState<boolean>(false);
     const [dataLogo, setDataLogo] = useState<ICompanyLogo[]>([]);
     const [previewOpen, setPreviewOpen] = useState(false);
@@ -72,6 +73,7 @@ const ModalCompany = (props: IProps) => {
 
 
     // Usage of DebounceSelect
+
     async function fetchSkillList(name: string): Promise<ISkillSelect[]> {
         const res = await callFetchSkill(`current=1&pageSize=100&name=/${name}/i`);
         if (res && res.data) {

@@ -1,4 +1,4 @@
-import { IBackendRes, ICompany, IAccount, IUser, IModelPaginate, IGetAccount, IJob, IResume, IPermission, IRole, ISubscribers } from '@/types/backend';
+import { IBackendRes, ICompany, IAccount, IUser, IModelPaginate, IGetAccount, IJob, IResume, IPermission, IRole, ISubscribers, ISkill, IChat, IMessage } from '@/types/backend';
 import axios from 'config/axios-customize';
 
 /**
@@ -65,6 +65,10 @@ export const callCreateCompany = (name: string, address: string, country: string
     return axios.post<IBackendRes<ICompany>>('/api/v1/companies', { name, address, country, companyType, companySize, workingDays, overtimePolicy, ourkeyskills, description, logo })
 }
 
+export const callGetCompanyByUser = () => {
+    return axios.post<IBackendRes<ICompany>>('/api/v1/companies/by-user');
+}
+
 export const callUpdateCompany = (id: string, name: string, address: string, country: string, companyType: string, companySize: string, workingDays: string, overtimePolicy: string, ourkeyskills: string[], description: string, logo: string) => {
     return axios.patch<IBackendRes<ICompany>>(`/api/v1/companies/${id}`, { name, address, country, companyType, companySize, workingDays, overtimePolicy, ourkeyskills, description, logo })
 }
@@ -102,6 +106,27 @@ export const callFetchUser = (query: string) => {
     return axios.get<IBackendRes<IModelPaginate<IUser>>>(`/api/v1/users?${query}`);
 }
 
+
+/**
+ * 
+Module Skill
+ */
+export const callCreateSkill = (name: string) => {
+    return axios.post<IBackendRes<ISkill>>('/api/v1/skills', { name })
+}
+
+export const callUpdateSkill = (id: string, name: string) => {
+    return axios.patch<IBackendRes<ISkill>>(`/api/v1/skills/${id}`, { name })
+}
+
+export const callDeleteSkill = (id: string) => {
+    return axios.delete<IBackendRes<ISkill>>(`/api/v1/skills/${id}`);
+}
+
+export const callFetchSkill = (query: string) => {
+    return axios.get<IBackendRes<IModelPaginate<ISkill>>>(`/api/v1/skills?${query}`);
+}
+
 /**
  * 
 Module Job
@@ -128,6 +153,10 @@ export const callFetchJobByHr = (query: string) => {
 
 export const callFetchJobById = (id: string) => {
     return axios.get<IBackendRes<IJob>>(`/api/v1/jobs/${id}`);
+}
+
+export const callFetchJobByIdCompany = (id: string) => {
+    return axios.get<IBackendRes<IJob>>(`/api/v1/jobs/by-company-id/${id}`);
 }
 
 /**
@@ -236,5 +265,63 @@ export const callFetchSubscriber = (query: string) => {
 
 export const callFetchSubscriberById = (id: string) => {
     return axios.get<IBackendRes<ISubscribers>>(`/api/v1/subscribers/${id}`);
+}
+
+
+
+/**
+ * 
+Module Chats
+ */
+export const callCreateChat = (chat: IChat) => {
+    return axios.post<IBackendRes<IChat>>('/api/v1/chats', { ...chat })
+}
+
+// export const callGetSubscriberSkills = () => {
+//     return axios.post<IBackendRes<ISubscribers>>('/api/v1/subscribers/skills')
+// }
+
+// export const callUpdateSubscriber = (subs: ISubscribers) => {
+//     return axios.patch<IBackendRes<ISubscribers>>(`/api/v1/subscribers`, { ...subs })
+// }
+
+// export const callDeleteSubscriber = (id: string) => {
+//     return axios.delete<IBackendRes<ISubscribers>>(`/api/v1/subscribers/${id}`);
+// }
+
+// export const callFetchSubscriber = (query: string) => {
+//     return axios.get<IBackendRes<IModelPaginate<ISubscribers>>>(`/api/v1/subscribers?${query}`);
+// }
+
+export const callFetchChatById = (firstId: string, secondId: string) => {
+    return axios.get<IBackendRes<IChat>>(`/api/v1/chats/${firstId}/${secondId}`);
+}
+
+/**
+ * 
+Module Messages
+ */
+export const callCreateMessage = (message: IMessage) => {
+    return axios.post<IBackendRes<IMessage>>('/api/v1/messages', { ...message })
+}
+
+// export const callGetSubscriberSkills = () => {
+//     return axios.post<IBackendRes<ISubscribers>>('/api/v1/subscribers/skills')
+// }
+
+// export const callUpdateSubscriber = (subs: ISubscribers) => {
+//     return axios.patch<IBackendRes<ISubscribers>>(`/api/v1/subscribers`, { ...subs })
+// }
+
+// export const callDeleteSubscriber = (id: string) => {
+//     return axios.delete<IBackendRes<ISubscribers>>(`/api/v1/subscribers/${id}`);
+// }
+
+// export const callFetchSubscriber = (query: string) => {
+//     return axios.get<IBackendRes<IModelPaginate<ISubscribers>>>(`/api/v1/subscribers?${query}`);
+// }
+
+export const callFetchMessageByChatId = (chatId: string) => {
+    return axios.get<IBackendRes<IMessage>>(`/api/v1/messages/${chatId}`);
 }
 

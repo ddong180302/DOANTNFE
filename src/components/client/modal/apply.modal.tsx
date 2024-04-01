@@ -29,6 +29,7 @@ const ApplyModal = (props: IProps) => {
             return;
         }
 
+
         if (!isAuthenticated) {
             setIsModalOpen(false);
             navigate(`/login?callback=${window.location.href}`)

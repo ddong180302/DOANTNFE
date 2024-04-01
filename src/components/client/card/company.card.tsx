@@ -1,7 +1,7 @@
 import { callFetchCompany } from '@/config/api';
 import { convertSlug } from '@/config/utils';
 import { ICompany } from '@/types/backend';
-import { Card, Col, Divider, Empty, Pagination, Row, Spin } from 'antd';
+import { Card, Col, Divider, Empty, Pagination, Row, Spin, Tag } from 'antd';
 import { useState, useEffect } from 'react';
 import { isMobile } from 'react-device-detect';
 import { Link, useNavigate } from 'react-router-dom';
@@ -79,22 +79,29 @@ const CompanyCard = (props: IProps) => {
                         {
                             displayCompany?.map(item => {
                                 return (
-                                    <Col span={24} md={6} key={item._id}>
+                                    <Col span={24} md={8} key={item._id}>
                                         <Card
+                                            className={styles["card"]}
                                             onClick={() => handleViewDetailJob(item)}
-                                            style={{ height: 350 }}
-                                            hoverable
-                                            cover={
-                                                <div className={styles["card-customize"]} >
-                                                    <img
-                                                        alt="example"
-                                                        src={`${import.meta.env.VITE_BACKEND_URL}/images/company/${item?.logo}`}
-                                                    />
-                                                </div>
-                                            }
                                         >
-                                            <Divider />
-                                            <h3 style={{ textAlign: "center" }}>{item.name}</h3>
+                                            <div className={styles["card-customize"]} >
+                                                <img
+                                                    alt="example"
+                                                    src={`${import.meta.env.VITE_BACKEND_URL}/images/company/${item?.logo}`}
+                                                />
+                                            </div>
+                                            <div>
+                                                <h3 style={{ textAlign: "center", paddingBottom: "20px", fontSize: "18px" }}>{item.name}</h3>
+                                            </div>
+                                            <div className={styles["skills"]}>
+                                                {item?.ourkeyskills?.map((item, index) => {
+                                                    return (
+                                                        <Tag key={`${index}-key`} color="gold" style={{ padding: "2px 10px", marginBottom: "5px" }} >
+                                                            {item}
+                                                        </Tag>
+                                                    )
+                                                })}
+                                            </div>
                                         </Card>
                                     </Col>
                                 )

@@ -57,6 +57,28 @@ export interface ICompany {
 }
 
 
+export interface IChat {
+    _id?: string;
+    firstId?: string;
+    secondId?: string;
+    createdBy?: string;
+    isDeleted?: boolean;
+    deletedAt?: boolean | null;
+    createdAt?: string;
+    updatedAt?: string;
+}
+
+export interface IMessage {
+    _id?: string;
+    chatId?: string;
+    senderId?: string;
+    text?: string;
+    createdBy?: string;
+    isDeleted?: boolean;
+    deletedAt?: boolean | null;
+    createdAt?: string;
+    updatedAt?: string;
+}
 
 export interface IUser {
     _id?: string;
@@ -83,7 +105,19 @@ export interface IUser {
     updatedAt?: string;
 }
 
+export interface ISkill {
+    _id?: string;
+    name: string;
+    createdBy?: string;
+    isDeleted?: boolean;
+    deletedAt?: boolean | null;
+    createdAt?: string;
+    updatedAt?: string;
+}
+
 export interface IJob {
+    jobs?: [];
+    count?: string;
     _id?: string;
     name: string;
     skills: string[];

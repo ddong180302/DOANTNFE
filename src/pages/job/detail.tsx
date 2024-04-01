@@ -74,7 +74,7 @@ const ClientJobDetailPage = (props: any) => {
                 <Row gutter={[20, 20]}>
                     {jobDetail && jobDetail._id &&
                         <>
-                            <Col className={styles["left-col"]} span={24} md={16}>
+                            <Col className={styles["left-col"]} span={24} md={15}>
                                 <div className={styles["header"]}>
                                     {jobDetail.name}
                                 </div>
@@ -104,29 +104,81 @@ const ClientJobDetailPage = (props: any) => {
                                 <div>
                                     <HistoryOutlined /> {dayjs(jobDetail.updatedAt).fromNow()}
                                 </div>
+                                <div>
+                                    <button className={styles["btn-chat"]}>
+                                        Chat ngay
+                                    </button>
+                                </div>
                                 <Divider />
                                 {parse(jobDetail.description)}
                             </Col>
 
                             {companyDetail && companyDetail._id &&
-                                <Col span={24} md={8}>
+                                <Col span={24} md={8} className={styles["right-col"]}>
                                     <div className={styles["company"]}>
-                                        <div>
-                                            <img
-                                                alt="example"
-                                                src={`${import.meta.env.VITE_BACKEND_URL}/images/company/${jobDetail.company?.logo}`}
-                                            />
-                                        </div>
-                                        <div>
-                                            {companyDetail?.name}
+                                        <div className={styles["logo-name"]}>
+                                            <div className={styles["logo"]}>
+                                                <img
+                                                    alt="example"
+                                                    src={`${import.meta.env.VITE_BACKEND_URL}/images/company/${jobDetail.company?.logo}`}
+                                                />
+                                            </div>
+                                            <div className={styles["name"]}>
+                                                {companyDetail?.name}
+                                            </div>
                                         </div>
                                         <Divider />
-                                        <div>
-                                            {companyDetail?.address}
+                                        <div className={styles["detail"]}>
+                                            <div className={styles["detail-label"]}>
+                                                Địa chỉ
+                                            </div>
+                                            <div className={styles["detail-content"]}>
+                                                {companyDetail?.address}
+                                            </div>
                                         </div>
-                                        {parse(companyDetail.description)}
+                                        <div className={styles["detail"]}>
+                                            <div className={styles["detail-label"]}>
+                                                Quy mô công ty
+                                            </div>
+                                            <div className={styles["detail-content"]}>
+                                                {companyDetail?.companySize}
+                                            </div>
+                                        </div>
+                                        <div className={styles["detail"]}>
+                                            <div className={styles["detail-label"]}>
+                                                Mô hình công ty
+                                            </div>
+                                            <div className={styles["detail-content"]}>
+                                                {companyDetail?.companyType}
+                                            </div>
+                                        </div>
+                                        <div className={styles["detail"]}>
+                                            <div className={styles["detail-label"]}>
+                                                Quốc gia
+                                            </div>
+                                            <div className={styles["detail-content"]}>
+                                                {companyDetail?.country}
+                                            </div>
+                                        </div>
+                                        <div className={styles["detail"]}>
+                                            <div className={styles["detail-label"]}>
+                                                Thời gian làm việc
+                                            </div>
+                                            <div className={styles["detail-content"]}>
+                                                {companyDetail?.workingDays}
+                                            </div>
+                                        </div>
+                                        <div className={styles["detail"]}>
+                                            <div className={styles["detail-label"]}>
+                                                Làm việc ngoài giờ
+                                            </div>
+                                            <div className={styles["detail-content"]}>
+                                                {companyDetail?.overtimePolicy}
+                                            </div>
+                                        </div>
                                     </div>
                                 </Col>
+
                             }
                         </>
                     }

@@ -30,8 +30,15 @@ import ClientJobPage from './pages/job';
 import ClientJobDetailPage from './pages/job/detail';
 import ClientCompanyPage from './pages/company';
 import ClientCompanyDetailPage from './pages/company/detail';
-import ConfirmPage from './pages/auth/confirm';
 import ForgotPage from './pages/auth/forgot';
+import SkillPage from './pages/admin/skill';
+import SubscriberPage from './pages/admin/subscriber';
+import LayoutHr from './components/hr/layout.hr';
+import CompanyPageHr from './pages/hr/company';
+import ContactPage from './pages/contact';
+import JobPageHr from './pages/hr/job';
+import ViewUpsertJobHr from './components/hr/job/upsert.job';
+import ResumePageHr from './pages/hr/resume';
 
 const LayoutClient = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -80,6 +87,7 @@ export default function App() {
       children: [
         { index: true, element: <HomePage /> },
         { path: "job", element: <ClientJobPage /> },
+        { path: "contact", element: <ContactPage /> },
         { path: "job/:id", element: <ClientJobDetailPage /> },
         { path: "company", element: <ClientCompanyPage /> },
         { path: "company/:id", element: <ClientCompanyDetailPage /> }
@@ -111,6 +119,13 @@ export default function App() {
               <UserPage />
             </ProtectedRoute>
         },
+        {
+          path: "subscriber",
+          element:
+            <ProtectedRoute>
+              <SubscriberPage />
+            </ProtectedRoute>
+        },
 
         {
           path: "job",
@@ -133,6 +148,14 @@ export default function App() {
               <ResumePage />
             </ProtectedRoute>
         },
+
+        {
+          path: "skill",
+          element:
+            <ProtectedRoute>
+              <SkillPage />
+            </ProtectedRoute>
+        },
         {
           path: "permission",
           element:
@@ -149,7 +172,46 @@ export default function App() {
         }
       ],
     },
-
+    {
+      path: "/hr",
+      element: (<LayoutApp><LayoutHr /></LayoutApp>),
+      errorElement: <NotFound />,
+      children: [
+        {
+          index: true, element:
+            <ProtectedRoute>
+              <DashboardPage />
+            </ProtectedRoute>
+        },
+        {
+          path: "company",
+          element:
+            <ProtectedRoute>
+              <CompanyPageHr />
+            </ProtectedRoute>
+        },
+        {
+          path: "job",
+          children: [
+            {
+              index: true,
+              element: <ProtectedRoute> <JobPageHr /></ProtectedRoute>
+            },
+            {
+              path: "upsert", element:
+                <ProtectedRoute><ViewUpsertJobHr /></ProtectedRoute>
+            }
+          ]
+        },
+        {
+          path: "resume",
+          element:
+            <ProtectedRoute>
+              <ResumePageHr />
+            </ProtectedRoute>
+        },
+      ],
+    },
 
     {
       path: "/login",

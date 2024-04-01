@@ -76,7 +76,7 @@
     display: block;
     width: 100%;
     height: 55px;
-    background-color: #222831;
+    background: linear-gradient(277.42deg, #54151C 0%, #121212 43.92%);
 
     .brand {
         display: flex;
@@ -99,6 +99,24 @@
         width: 100%;
 
         .extra {
+            .auth {
+                display: flex;
+
+                .link {
+                    font-size: 16px;
+                    margin: 10px;
+                }
+            }
+
+            .manage {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+
+                .link {
+                    margin-right: 20px;
+                }
+            }
 
             a,
             span {
@@ -120,6 +138,86 @@
         align-items: center;
         height: 55px;
         color: white;
+    }
+}
+
+.footer-section {
+    display: block;
+    width: 100%;
+    margin-top: 20px;
+
+    .footer-content {
+        background: linear-gradient(277.42deg, #54151C 0%, #121212 43.92%);
+        display: flex;
+        justify-content: space-between;
+        padding: 50px;
+
+        .content1 {
+            height: 100%;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-items: center;
+
+
+            img {
+                border-radius: 20px;
+                width: 30%;
+                height: 100px;
+                margin-bottom: 10px;
+            }
+
+            p {
+                font-size: 18px;
+                color: #e6dddd;
+            }
+        }
+
+        .content2 {
+            height: 100%;
+            width: 100%;
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+
+            h2 {
+                font-size: 22px;
+            }
+
+            a {
+                font-size: 18px;
+                line-height: normal;
+                text-decoration: none;
+                color: #e6dddd;
+                padding: 10px 0;
+            }
+        }
+
+        .content3 {
+            height: 100%;
+            width: 100%;
+            color: #fff;
+
+            h2 {
+                font-size: 22px;
+            }
+
+            a {
+                font-size: 18px;
+                line-height: normal;
+                text-decoration: none;
+                color: #e6dddd;
+                padding: 10px 0;
+            }
+
+            p {
+                font-size: 18px;
+                line-height: normal;
+                padding: 10px 0;
+                color: #e6dddd;
+            }
+        }
     }
 }
 
@@ -154,6 +252,9 @@
                 margin: 0 auto;
 
                 img {
+                    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+                    border-radius: 5px;
+                    border: 1px solid #ddd;
                     width: 50px;
                     height: 50px;
                 }
@@ -195,16 +296,27 @@
     .company-content {
         padding-top: 50px;
 
-        .card-customize {
-            height: 200px;
-            width: 200px;
-            margin: 20px auto 20px auto;
+        .card {
 
-            img {
+            background: #ddd;
+            height: 400px;
+
+            .card-customize {
                 height: 200px;
                 width: 200px;
+                margin: 20px auto 20px auto;
+
+
+                img {
+                    overflow: hidden;
+                    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+                    border-radius: 10px;
+                    height: 200px;
+                    width: 200px;
+                }
             }
         }
+
     }
 
 }
@@ -242,76 +354,322 @@
 }
 
 .detail-job-section {
-    .header {
-        margin: 20px 0;
-        color: #353535;
-        font-size: 27px;
+    .left-col {
+        border-radius: 10px;
+        background: #f3f3f3;
+        margin-top: 30px;
+        margin-right: 50px;
+
+        height: 700px;
+        overflow: auto;
+
+        .header {
+            margin: 20px 0;
+            color: #353535;
+            font-size: 27px;
+        }
+
+        .btn-apply {
+            width: 100%;
+            cursor: pointer;
+            text-align: center;
+            color: #fff;
+            text-decoration: none;
+            -webkit-font-smoothing: antialiased;
+            font-size: 20px;
+            padding: 10px 15px;
+            border: 0;
+            border-radius: 5px;
+            background-color: #ea1e30;
+            -webkit-font-smoothing: antialiased;
+            outline: 0;
+
+            &:hover {
+                background-color: #d82727;
+            }
+        }
+
+        .btn-chat {
+            width: 20%;
+            cursor: pointer;
+            text-align: center;
+            color: #fff;
+            text-decoration: none;
+            -webkit-font-smoothing: antialiased;
+            font-size: 20px;
+            padding: 10px 15px;
+            margin-top: 20px;
+            border: 0;
+            border-radius: 5px;
+            background-color: #1eea62;
+            -webkit-font-smoothing: antialiased;
+            outline: 0;
+
+            &:hover {
+                background-color: #30b811;
+            }
+        }
+
+        .salary {
+            padding: 15px 0;
+        }
+
+        .location {
+            padding-bottom: 15px;
+        }
+
+        h2 {
+            font-size: 23px;
+            color: #353535;
+            font-weight: 400;
+            margin: 25px 0 0;
+        }
+
+        ul {
+            padding-left: 2rem;
+        }
+
+        li {
+            line-height: 2em;
+        }
+
+        p {
+            color: #3a3a3a;
+            font-size: 16px;
+            line-height: 1.7em;
+            width: 100%;
+            line-height: 2em;
+        }
+
     }
 
-    .btn-apply {
-        width: 100%;
-        cursor: pointer;
-        text-align: center;
-        color: #fff;
-        text-decoration: none;
-        -webkit-font-smoothing: antialiased;
-        font-size: 20px;
-        padding: 10px 15px;
-        border: 0;
-        border-radius: 5px;
-        background-color: #ea1e30;
-        -webkit-font-smoothing: antialiased;
-        outline: 0;
+    .right-col {
+        border-radius: 10px;
+        margin-top: 30px;
+        background: #f3f3f3;
+        padding: 20px;
 
-        &:hover {
-            background-color: #d82727;
+        height: 510px;
+
+        .company {
+            .logo-name {
+                display: flex;
+                align-items: center;
+
+
+                .logo {
+
+                    margin-right: 20px;
+
+                    img {
+                        width: 100px;
+                        height: 100px;
+                        border: 1px solid #ddd;
+                        border-radius: 5px;
+                    }
+                }
+
+                .name {
+                    font-size: 20px;
+                }
+            }
+
+            .detail {
+                display: flex;
+                justify-content: space-between;
+                padding: 14px 0;
+                border-bottom: 1px dashed #313131;
+
+                .detail-label {
+                    font-size: 18px;
+                    font-weight: 500;
+                    opacity: 0.6;
+                }
+
+                .detail-content {
+                    font-size: 18px;
+                }
+            }
+
         }
     }
 
-    .salary {
-        padding: 15px 0;
-    }
+}
 
-    .location {
-        padding-bottom: 15px;
-    }
-
-    h2 {
-        font-size: 23px;
-        color: #353535;
-        font-weight: 400;
-        margin: 25px 0 0;
-    }
-
-    ul {
-        padding-left: 2rem;
-    }
-
-    li {
-        line-height: 2em;
-    }
-
-    p {
-        color: #3a3a3a;
-        font-size: 16px;
-        line-height: 1.7em;
-        width: 100%;
-        line-height: 2em;
-    }
-
-    .company {
-        margin: 20px 0;
-        color: #353535;
-        font-size: 27px;
+.detail-company-section {
+    .company-detail {
+        height: 700px;
         display: flex;
         flex-direction: column;
-        justify-content: center;
-        width: 100%;
-        align-items: center;
+        overflow: auto;
 
-        img {
-            width: 200px;
-            height: 200px;
+        .company {
+            margin-top: 20px;
+            background: linear-gradient(269.85deg, #54151C 0%, #121212 54.89%);
+            border-radius: 5px;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            flex-direction: row;
+            justify-content: space-between;
+            gap: 30px;
+
+            .company-logo {
+
+                img {
+
+                    width: 320px !important;
+                    height: 320px;
+                    border-radius: 20px;
+                }
+            }
+
+            .name-location {
+                .company-name {
+                    font-size: 40px;
+                    color: #fff;
+                    margin-bottom: 20px;
+                }
+
+                .company-location {
+                    font-size: 20px;
+                    color: #fff;
+                }
+            }
         }
+
+        .company-introduce {
+            background: #f0f0f0;
+            padding: 20px;
+            border-radius: 5px;
+            margin: 20px 0;
+
+            .header {
+                margin: 20px 0;
+                color: #353535;
+                font-size: 27px;
+            }
+
+            .intro-detail {
+                display: flex;
+                justify-content: space-between;
+
+                .detail {
+                    margin-top: 10px;
+                    font-weight: bold;
+                }
+            }
+
+            .skills {
+                .skill-tag {
+                    padding: 4px 10px;
+                    font-size: 16px;
+                }
+            }
+        }
+    }
+
+    .job {
+        height: 700px;
+        display: flex;
+        flex-direction: column;
+        overflow: auto;
+
+        .count-job {
+            font-weight: 600;
+            color: #121212;
+            font-size: 20px;
+            margin-top: 20px;
+        }
+
+        .job-detail {
+            margin-top: 20px;
+
+            .card-job-content {
+                .job-time {
+                    color: #121212;
+                    padding-bottom: 10px;
+                    font-size: 14px;
+                    opacity: 0.7;
+                }
+
+                .job-title {
+                    padding-bottom: 10px;
+                    font-size: 16px;
+                    font-weight: bold;
+                }
+
+                .job-logo-name {
+                    display: flex;
+                    justify-items: center;
+                    align-items: center;
+
+                    .logo {
+                        margin-right: 30px;
+
+                        img {
+                            border-radius: 5px;
+                            border: 1px solid #ddd;
+                            height: 40px;
+                            width: 40px;
+                        }
+                    }
+
+                    .name {
+                        font-size: 16px;
+                        font-weight: 500;
+                    }
+                }
+            }
+        }
+    }
+}
+
+.contact-section {
+    .contact {
+        background: linear-gradient(277.42deg, #54151C 0%, #121212 43.92%);
+        padding: 30px 20px;
+        border-radius: 10px;
+
+        .contact-left {
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+
+
+            .top {
+                height: 100%;
+
+                h2 {
+                    font-size: 24px;
+                    padding: 15px 0;
+                    font-weight: bold;
+                }
+
+                p {
+                    padding: 15px 0;
+                    font-size: 15px;
+                    font-weight: 500;
+                }
+            }
+
+            .bottom {
+                height: 100%;
+                background: #fff;
+                border-radius: 10px;
+            }
+        }
+
+
+        .contact-right {
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+            margin-left: 40px;
+            background: #fff;
+            height: 800px;
+            border-radius: 10px;
+
+            .item {}
+        }
+
     }
 }

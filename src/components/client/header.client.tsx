@@ -20,7 +20,6 @@ const Header = (props: any) => {
     const isAuthenticated = useAppSelector(state => state.account.isAuthenticated);
     const user = useAppSelector(state => state.account.user);
     const userRole = user?.role?.name;
-    const isNormal_User = "NORMAL_USER";
     const [openMobileMenu, setOpenMobileMenu] = useState<boolean>(false);
 
     const [current, setCurrent] = useState('home');
@@ -31,7 +30,6 @@ const Header = (props: any) => {
     useEffect(() => {
         setCurrent(location.pathname);
     }, [location])
-
     const items: MenuProps['items'] = [
         {
             label: <Link to={'/'}>Trang Chủ</Link>,
@@ -81,8 +79,55 @@ const Header = (props: any) => {
             >Trang Quản Trị</Link>,
             key: 'admin',
             icon: <DashOutlined />
+        },
+        {
+            label: <label
+                style={{ cursor: 'pointer' }}
+                onClick={() => handleLogout()}
+            >Đăng xuất</label>,
+            key: 'logout',
+            icon: <LogoutOutlined />
         }
-        ,
+    ];
+
+    const itemsDropdownHr = [
+        {
+            label:
+                <label
+                    style={{ cursor: 'pointer' }}
+                    onClick={() => setOpenManageAccount(true)}>
+                    Quản lý tài khoản
+                </label>,
+            key: 'manage-account',
+            icon: <ContactsOutlined />
+        }, {
+            label: <Link
+                to={"/hr"}
+            >Trang Quản Trị</Link>,
+            key: 'hr',
+            icon: <DashOutlined />
+        },
+        {
+            label: <label
+                style={{ cursor: 'pointer' }}
+                onClick={() => handleLogout()}
+            >Đăng xuất</label>,
+            key: 'logout',
+            icon: <LogoutOutlined />
+        },
+    ];
+
+    const itemsDropdownUser = [
+        {
+            label:
+                <label
+                    style={{ cursor: 'pointer' }}
+                    onClick={() => setOpenManageAccount(true)}>
+                    Quản lý tài khoản
+                </label>,
+            key: 'manage-account',
+            icon: <ContactsOutlined />
+        },
         {
             label: <label
                 style={{ cursor: 'pointer' }}
@@ -124,14 +169,45 @@ const Header = (props: any) => {
                                 </ConfigProvider>
                                 <div className={styles['extra']}>
                                     {isAuthenticated === false ?
-                                        <Link to={'/login'}>Đăng Nhập</Link>
+                                        <div className={styles["auth"]}>
+                                            <Link to={'/contact'} className={styles["link"]}>Nhà Tuyển Dụng</Link>
+                                            <Link to={'/register'} className={styles["link"]}>Đăng Ký</Link>
+                                            <Link to={'/login'} className={styles["link"]}>Đăng Nhập</Link>
+                                        </div>
                                         :
-                                        <Dropdown menu={{ items: itemsDropdown }} trigger={['click']}>
-                                            <Space style={{ cursor: "pointer" }}>
-                                                <span>{user?.name}</span>
-                                                <Avatar> {user?.name?.substring(0, 2)?.toUpperCase()} </Avatar>
-                                            </Space>
-                                        </Dropdown>
+                                        (
+                                            userRole === "USER" ?
+                                                <div className={styles["manage"]}>
+                                                    <div className={styles["link"]}>
+                                                        <Link to={'/contact'} className={styles["link"]}>Nhà Tuyển Dụng</Link>
+                                                    </div>
+                                                    <Dropdown menu={{ items: itemsDropdownUser }} trigger={['click']}>
+                                                        <Space style={{ cursor: "pointer" }}>
+                                                            <span>{user?.name}</span>
+                                                            <Avatar>{user?.name?.substring(0, 2)?.toUpperCase()}</Avatar>
+                                                        </Space>
+                                                    </Dropdown>
+                                                </div>
+                                                :
+                                                userRole === "HR" ?
+                                                    <div>
+                                                        <Dropdown menu={{ items: itemsDropdownHr }} trigger={['click']}>
+                                                            <Space style={{ cursor: "pointer" }}>
+                                                                <span>{user?.name}</span>
+                                                                <Avatar>{user?.name?.substring(0, 2)?.toUpperCase()}</Avatar>
+                                                            </Space>
+                                                        </Dropdown>
+                                                    </div>
+                                                    :
+                                                    <div>
+                                                        <Dropdown menu={{ items: itemsDropdown }} trigger={['click']}>
+                                                            <Space style={{ cursor: "pointer" }}>
+                                                                <span>{user?.name}</span>
+                                                                <Avatar>{user?.name?.substring(0, 2)?.toUpperCase()}</Avatar>
+                                                            </Space>
+                                                        </Dropdown>
+                                                    </div>
+                                        )
                                     }
                                 </div>
 

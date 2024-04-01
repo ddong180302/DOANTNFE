@@ -25,6 +25,8 @@ const ModalUser = (props: IProps) => {
     const [companies, setCompanies] = useState<ICompanySelect[]>([]);
     const [roles, setRoles] = useState<ICompanySelect[]>([]);
 
+    console.log(roles);
+
     const [form] = Form.useForm();
 
     useEffect(() => {
@@ -52,147 +54,219 @@ const ModalUser = (props: IProps) => {
         const { name, email, password, address, age, gender, role, company, phone } = valuesForm;
         if (dataInit?._id) {
             //update
-            if (company?._id && role?._id) {
-                const user = {
-                    _id: dataInit._id,
-                    name,
-                    email,
-                    password,
-                    age,
-                    gender,
-                    address,
-                    phone,
-                    role: role._id,
-                    company: {
-                        _id: company._id,
-                        name: company.name
+            if (!company) {
+                if (role?._id) {
+                    const user = {
+                        _id: dataInit._id,
+                        name,
+                        email,
+                        password,
+                        age,
+                        gender,
+                        address,
+                        phone,
+                        role: role._id
+                    }
+                    const res = await callUpdateUser(user);
+                    if (res.data) {
+                        message.success("Cập nhật user thành công");
+                        handleReset();
+                        reloadTable();
+                    } else {
+                        notification.error({
+                            message: 'Có lỗi xảy ra',
+                            description: res.message
+                        });
+                    }
+                } else {
+                    const user = {
+                        _id: dataInit._id,
+                        name,
+                        email,
+                        password,
+                        age,
+                        gender,
+                        address,
+                        phone,
+                        role: role.value
+                    }
+                    const res = await callUpdateUser(user);
+                    if (res.data) {
+                        message.success("Cập nhật user thành công");
+                        handleReset();
+                        reloadTable();
+                    } else {
+                        notification.error({
+                            message: 'Có lỗi xảy ra',
+                            description: res.message
+                        });
                     }
                 }
-                const res = await callUpdateUser(user);
-                if (res.data) {
-                    message.success("Cập nhật user thành công");
-                    handleReset();
-                    reloadTable();
-                } else {
-                    notification.error({
-                        message: 'Có lỗi xảy ra',
-                        description: res.message
-                    });
-                }
-            } else if (!company?._id && !role?._id) {
-                const user = {
-                    _id: dataInit._id,
-                    name,
-                    email,
-                    password,
-                    age,
-                    gender,
-                    address,
-                    phone,
-                    role: role.value,
-                    company: {
-                        _id: company.value,
-                        name: company.label
-                    }
-                }
-                const res = await callUpdateUser(user);
-                if (res.data) {
-                    message.success("Cập nhật user thành công");
-                    handleReset();
-                    reloadTable();
-                } else {
-                    notification.error({
-                        message: 'Có lỗi xảy ra',
-                        description: res.message
-                    });
-                }
-            }
-
-            else if (role?._id && !company?._id) {
-                const user = {
-                    _id: dataInit._id,
-                    name,
-                    email,
-                    password,
-                    age,
-                    gender,
-                    address,
-                    phone,
-                    role: role._id,
-                    company: {
-                        _id: company.value,
-                        name: company.label
-                    }
-                }
-                const res = await callUpdateUser(user);
-                if (res.data) {
-                    message.success("Cập nhật user thành công");
-                    handleReset();
-                    reloadTable();
-                } else {
-                    notification.error({
-                        message: 'Có lỗi xảy ra',
-                        description: res.message
-                    });
-                }
-            }
-
-            else if (!role?._id && company?._id) {
-                const user = {
-                    _id: dataInit._id,
-                    name,
-                    email,
-                    password,
-                    age,
-                    gender,
-                    address,
-                    phone,
-                    role: role.value,
-                    company: {
-                        _id: company._id,
-                        name: company.name
-                    }
-                }
-                const res = await callUpdateUser(user);
-                if (res.data) {
-                    message.success("Cập nhật user thành công");
-                    handleReset();
-                    reloadTable();
-                } else {
-                    notification.error({
-                        message: 'Có lỗi xảy ra',
-                        description: res.message
-                    });
-                }
-            }
-
-        } else {
-            console.log("check company: ", company)
-            //create
-            const user = {
-                name,
-                email,
-                password,
-                age,
-                gender,
-                address,
-                phone,
-                role: role.value,
-                company: {
-                    _id: company.value,
-                    name: company.label
-                }
-            }
-            const res = await callCreateUser(user);
-            if (res.data) {
-                message.success("Thêm mới user thành công");
-                handleReset();
-                reloadTable();
             } else {
-                notification.error({
-                    message: 'Có lỗi xảy ra',
-                    description: res.message
-                });
+
+                if (company?._id && role?._id) {
+                    const user = {
+                        _id: dataInit._id,
+                        name,
+                        email,
+                        password,
+                        age,
+                        gender,
+                        address,
+                        phone,
+                        role: role._id,
+                        company: {
+                            _id: company._id,
+                            name: company.name
+                        }
+                    }
+                    const res = await callUpdateUser(user);
+                    if (res.data) {
+                        message.success("Cập nhật user thành công");
+                        handleReset();
+                        reloadTable();
+                    } else {
+                        notification.error({
+                            message: 'Có lỗi xảy ra',
+                            description: res.message
+                        });
+                    }
+                } else if (!company?._id && !role?._id) {
+                    const user = {
+                        _id: dataInit._id,
+                        name,
+                        email,
+                        password,
+                        age,
+                        gender,
+                        address,
+                        phone,
+                        role: role.value,
+                        company: {
+                            _id: company.value,
+                            name: company.label
+                        }
+                    }
+                    const res = await callUpdateUser(user);
+                    if (res.data) {
+                        message.success("Cập nhật user thành công");
+                        handleReset();
+                        reloadTable();
+                    } else {
+                        notification.error({
+                            message: 'Có lỗi xảy ra',
+                            description: res.message
+                        });
+                    }
+                }
+                else if (role?._id && !company?._id) {
+                    const user = {
+                        _id: dataInit._id,
+                        name,
+                        email,
+                        password,
+                        age,
+                        gender,
+                        address,
+                        phone,
+                        role: role._id,
+                        company: {
+                            _id: company.value,
+                            name: company.label,
+                        }
+                    }
+                    const res = await callUpdateUser(user);
+                    if (res.data) {
+                        message.success("Cập nhật user thành công");
+                        handleReset();
+                        reloadTable();
+                    } else {
+                        notification.error({
+                            message: 'Có lỗi xảy ra',
+                            description: res.message
+                        });
+                    }
+                }
+                else if (!role?._id && company?._id) {
+                    const user = {
+                        _id: dataInit._id,
+                        name,
+                        email,
+                        password,
+                        age,
+                        gender,
+                        address,
+                        phone,
+                        role: role.value,
+                        company: {
+                            _id: company._id,
+                            name: company.name
+                        }
+                    }
+                    const res = await callUpdateUser(user);
+                    if (res.data) {
+                        message.success("Cập nhật user thành công");
+                        handleReset();
+                        reloadTable();
+                    } else {
+                        notification.error({
+                            message: 'Có lỗi xảy ra',
+                            description: res.message
+                        });
+                    }
+                }
+
+            }
+        } else {
+            //create
+            if (!company) {
+                const user = {
+                    name,
+                    email,
+                    password,
+                    age,
+                    gender,
+                    address,
+                    phone,
+                    role: role.value,
+                }
+                const res = await callCreateUser(user);
+                if (res.data) {
+                    message.success("Thêm mới user thành công");
+                    handleReset();
+                    reloadTable();
+                } else {
+                    notification.error({
+                        message: 'Có lỗi xảy ra',
+                        description: res.message
+                    });
+                }
+            } else {
+                const user = {
+                    name,
+                    email,
+                    password,
+                    age,
+                    gender,
+                    address,
+                    phone,
+                    role: role.value,
+                    company: {
+                        _id: company.value,
+                        name: company.label
+                    }
+                }
+                const res = await callCreateUser(user);
+                if (res.data) {
+                    message.success("Thêm mới user thành công");
+                    handleReset();
+                    reloadTable();
+                } else {
+                    notification.error({
+                        message: 'Có lỗi xảy ra',
+                        description: res.message
+                    });
+                }
             }
         }
     }
@@ -317,7 +391,7 @@ const ModalUser = (props: IProps) => {
                                 showSearch
                                 defaultValue={roles}
                                 value={roles}
-                                placeholder="Chọn công vai trò"
+                                placeholder="Chọn vai trò"
                                 fetchOptions={fetchRoleList}
                                 onChange={(newValue: any) => {
                                     if (newValue?.length === 0 || newValue?.length === 1) {
@@ -333,7 +407,7 @@ const ModalUser = (props: IProps) => {
                         <ProForm.Item
                             name="company"
                             label="Thuộc Công Ty"
-                            rules={[{ required: true, message: 'Vui lòng chọn company!' }]}
+                            rules={[{ required: false, message: 'Vui lòng chọn company!' }]}
                         >
                             <DebounceSelect
                                 allowClear

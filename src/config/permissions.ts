@@ -41,6 +41,20 @@ export const ALL_PERMISSIONS = {
         UPDATE: { method: "PATCH", apiPath: '/api/v1/users', module: "USERS" },
         DELETE: { method: "DELETE", apiPath: '/api/v1/users/:id', module: "USERS" },
     },
+    SKILLS: {
+        GET_PAGINATE: { method: "GET", apiPath: '/api/v1/skills', module: "SKILLS" },
+        GET_BY_ID: { method: "GET", apiPath: '/api/v1/skills/:id', module: "SKILLS" },
+        CREATE: { method: "POST", apiPath: '/api/v1/skills', module: "SKILLS" },
+        UPDATE: { method: "PATCH", apiPath: '/api/v1/skills/:id', module: "SKILLS" },
+        DELETE: { method: "DELETE", apiPath: '/api/v1/skills/:id', module: "SKILLS" },
+    },
+    SUBSCRIBERS: {
+        GET_PAGINATE: { method: "GET", apiPath: '/api/v1/subscribers', module: "SUBSCRIBERS" },
+        GET_BY_ID: { method: "GET", apiPath: '/api/v1/subscribers/:id', module: "SUBSCRIBERS" },
+        CREATE: { method: "POST", apiPath: '/api/v1/subscribers', module: "SUBSCRIBERS" },
+        UPDATE: { method: "PATCH", apiPath: '/api/v1/subscribers/:id', module: "SUBSCRIBERS" },
+        DELETE: { method: "DELETE", apiPath: '/api/v1/subscribers/:id', module: "SUBSCRIBERS" },
+    },
 }
 
 export const ALL_MODULES = {
@@ -52,5 +66,8 @@ export const ALL_MODULES = {
     RESUMES: 'RESUMES',
     ROLES: 'ROLES',
     USERS: 'USERS',
-    SUBSCRIBERS: 'SUBSCRIBERS'
+    SUBSCRIBERS: 'SUBSCRIBERS',
+    SKILLS: 'SKILLS',
+    CHATS: 'CHATS',
+    MESSAGES: 'MESSAGES',
 }
