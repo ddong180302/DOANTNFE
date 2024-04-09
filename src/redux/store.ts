@@ -23,10 +23,9 @@ export const store = configureStore({
     permission: permissionReducer,
     role: roleReducer,
     skill: skillReducer,
-    subscriber: subscriberReducer
+    subscriber: subscriberReducer,
   },
 });
-
 
 export type AppDispatch = typeof store.dispatch;
 export type RootState = ReturnType<typeof store.getState>;

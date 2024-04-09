@@ -20,15 +20,16 @@ import type { MenuProps } from 'antd';
 import { setLogoutAction } from '@/redux/slice/accountSlide';
 import { ALL_PERMISSIONS } from '@/config/permissions';
 
+
 const { Content, Footer, Sider } = Layout;
 
 const LayoutHr = () => {
     const location = useLocation();
-
+    const isAuthenticated = useAppSelector(state => state.account.isAuthenticated);
     const [collapsed, setCollapsed] = useState(false);
     const [activeMenu, setActiveMenu] = useState('');
     const user = useAppSelector(state => state.account.user);
-
+    const userId = user?._id;
     const permissions = useAppSelector(state => state.account.user.permissions);
     const [menuItems, setMenuItems] = useState<MenuProps['items']>([]);
 
@@ -107,7 +108,15 @@ const LayoutHr = () => {
             key: 'logout',
         },
     ];
-
+    const handleChat = () => {
+        if (isAuthenticated) {
+            // Nếu đã đăng nhập, chuyển hướng người dùng đến trang tin nhắn và truyền tham số firstId và secondId
+            navigate('/messages', { state: { userId } });
+        } else {
+            // Nếu chưa đăng nhập, đưa người dùng đến trang đăng nhập
+            navigate('/login');
+        }
+    };
     return (
         <>
             <Layout
@@ -152,12 +161,11 @@ const LayoutHr = () => {
                                     height: 64,
                                 }}
                             />
-
+                            <Button style={{ marginTop: "20px" }} onClick={() => handleChat()}>Chat ngay</Button>
                             <Dropdown menu={{ items: itemsDropdown }} trigger={['click']}>
                                 <Space style={{ cursor: "pointer" }}>
                                     {user?.name}
                                     <Avatar> {user?.name?.substring(0, 2)?.toUpperCase()} </Avatar>
-
                                 </Space>
                             </Dropdown>
                         </div>

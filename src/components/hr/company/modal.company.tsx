@@ -6,19 +6,19 @@ import { isMobile } from 'react-device-detect';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import { useEffect, useState } from "react";
-import { callCreateCompany, callFetchSkill, callUpdateCompany, callUploadSingleFile } from "@/config/api";
+import { callCreateCompany, callFetchSkill, callGetCompanyByUser, callUpdateCompany, callUploadSingleFile } from "@/config/api";
 import { ICompany } from "@/types/backend";
 import { v4 as uuidv4 } from 'uuid';
 import enUS from 'antd/lib/locale/en_US';
 import countryList, { Country } from 'country-list';
-import { DebounceSelect } from "@/components/admin/user/debouce.select";
+import { DebounceSelect } from "@/components/admin/skill/debouce.select";
 
 interface IProps {
     openModal: boolean;
     setOpenModal: (v: boolean) => void;
     dataInit?: ICompany | null;
     setDataInit: (v: any) => void;
-    reloadTable: () => void;
+    afterCloseModal?: () => void;
 }
 
 interface ICompanyForm {
@@ -45,18 +45,17 @@ export interface ISkillSelect {
 
 
 const ModalCompany = (props: IProps) => {
-    const { openModal, setOpenModal, reloadTable, dataInit, setDataInit } = props;
+    const { openModal, setOpenModal, dataInit, setDataInit, afterCloseModal } = props;
     const [skills, setSkills] = useState<ISkillSelect[]>([]);
 
     //modal animation
     const [animation, setAnimation] = useState<string>('open');
-
     const [loadingUpload, setLoadingUpload] = useState<boolean>(false);
     const [dataLogo, setDataLogo] = useState<ICompanyLogo[]>([]);
     const [previewOpen, setPreviewOpen] = useState(false);
     const [previewImage, setPreviewImage] = useState('');
     const [previewTitle, setPreviewTitle] = useState('');
-
+    const [resetData, setResetData] = useState<boolean>(false);
     const [value, setValue] = useState<string>("");
     const [form] = Form.useForm();
     const countries: Country[] = countryList.getData();
@@ -73,7 +72,6 @@ const ModalCompany = (props: IProps) => {
 
 
     // Usage of DebounceSelect
-
     async function fetchSkillList(name: string): Promise<ISkillSelect[]> {
         const res = await callFetchSkill(`current=1&pageSize=100&name=/${name}/i`);
         if (res && res.data) {
@@ -84,10 +82,11 @@ const ModalCompany = (props: IProps) => {
                     value: item.name as string
                 }
             })
-            console.log(temp);
             return temp;
         } else return [];
     }
+
+
 
     useEffect(() => {
         if (dataInit?._id && dataInit?.description) {
@@ -120,9 +119,15 @@ const ModalCompany = (props: IProps) => {
         }
 
         init();
-        return () => form.resetFields();
+        return () => {
+            form.resetFields();
+            //setValue("");
+            //setDataInit(null);
+            //setSkills([]);
+            setResetData(true); // Set resetData thành true để reset dữ liệu
+        };
 
-    }, [dataInit]);
+    }, [dataInit, form]);
 
     const submitCompany = async (valuesForm: ICompanyForm) => {
         const {
@@ -130,7 +135,14 @@ const ModalCompany = (props: IProps) => {
             companySize, workingDays,
             overtimePolicy, ourkeyskills
         } = valuesForm;
-        const valuesSkill = ourkeyskills.map((item: any) => item.label);
+        //const valuesSkill = ourkeyskills.map((item: any) => item.label);
+        const valuesSkill = ourkeyskills.map((item: any) => {
+            if (item && item?.label) {
+                return item.label;
+            } else {
+                return item;
+            }
+        });
         const country = form.getFieldValue('country');
 
         if (dataLogo.length === 0) {
@@ -143,21 +155,13 @@ const ModalCompany = (props: IProps) => {
             const res = await callUpdateCompany(dataInit._id, name, address, country, companyType, companySize, workingDays, overtimePolicy, valuesSkill, value, dataLogo[0].name);
             if (res.data) {
                 message.success("Cập nhật company thành công");
+                setResetData(true);
                 handleReset();
-                reloadTable();
-            } else {
-                notification.error({
-                    message: 'Có lỗi xảy ra',
-                    description: res.message
-                });
-            }
-        } else {
-            //create
-            const res = await callCreateCompany(name, address, country, companyType, companySize, workingDays, overtimePolicy, valuesSkill, value, dataLogo[0].name);
-            if (res.data) {
-                message.success("Thêm mới company thành công");
-                handleReset();
-                reloadTable();
+
+                const updatedCompanyRes = await callGetCompanyByUser(); // Gọi API để lấy thông tin công ty sau khi cập nhật
+                if (updatedCompanyRes?.data) {
+                    setDataInit(updatedCompanyRes.data); // Cập nhật lại dataInit với dữ liệu mới nhất
+                }
             } else {
                 notification.error({
                     message: 'Có lỗi xảy ra',
@@ -169,15 +173,18 @@ const ModalCompany = (props: IProps) => {
 
     const handleReset = async () => {
         form.resetFields();
-        setValue("");
-        setDataInit(null);
-
-        //add animation when closing modal
+        const updatedCompanyRes = await callGetCompanyByUser();
+        if (updatedCompanyRes?.data) {
+            setDataInit(updatedCompanyRes.data); // Cập nhật lại dataInit với dữ liệu mới nhất
+        }
         setAnimation('close')
         await new Promise(r => setTimeout(r, 400))
         setOpenModal(false);
         setAnimation('open')
-        setSkills([]);
+        setResetData(true);
+        if (afterCloseModal) {
+            afterCloseModal(); // Gọi hàm callback khi modal được đóng
+        }
     }
 
     const handleRemoveFile = (file: any) => {

@@ -247,6 +247,8 @@
             width: 100%;
             gap: 10px;
 
+            height: 130px;
+
             .card-job-left {
                 width: 70px;
                 margin: 0 auto;
@@ -671,5 +673,190 @@
             .item {}
         }
 
+    }
+}
+
+
+.message-section {
+    margin-top: 30px;
+
+    .listchat {
+        background-color: #f6f6f6;
+        height: 500px;
+        overflow-y: auto;
+        border-right: 6px solid #e8e5e5;
+
+        .selected-item,
+        .item {
+            padding: 20px;
+            cursor: pointer;
+            margin: 0;
+
+            &.selected-item {
+                width: 100%;
+                transition: background-color 0.3s ease;
+                background-color: #dcf1fb;
+
+            }
+        }
+    }
+
+    .listmess {
+        height: 500px;
+        position: relative;
+        padding: 0 20px 40px 20px;
+
+        .listtext {
+            overflow-y: auto;
+            height: calc(100% - 50px);
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 20px;
+
+            .divtext {
+                display: flex;
+                margin: 10px 0;
+                width: fit-content;
+                max-width: 70%; // or adjust as needed
+                border-radius: 10px;
+                padding: 10px;
+                font-size: 16px;
+                line-height: 1.5;
+                align-items: center;
+                justify-content: center;
+                gap: 10px;
+                font-weight: 600;
+            }
+
+            .divtext1 {
+                align-self: flex-end;
+                background-color: #1890ff;
+                color: #fff;
+                text-align: left;
+                margin-right: 20px;
+            }
+
+            .divtext2 {
+                align-self: flex-start;
+                text-align: left;
+                background-color: #f0f0f0;
+                color: #000;
+            }
+        }
+
+        .input-section {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            padding: 10px;
+            margin-top: 20px;
+
+            .ant-input {
+                width: calc(100% - 150px);
+            }
+
+            .ant-btn {
+                margin-left: 30px;
+                width: 80px;
+            }
+        }
+    }
+
+
+}
+
+.company-hr-section {
+    .company-detail {
+        .edit-btn {
+            Button {
+                background: #99eab4;
+            }
+
+            margin-bottom: 10px;
+        }
+
+        .company {
+            display: flex;
+            // background: linear-gradient(277.42deg, #54151C 0%, #121212 43.92%);
+            // color: #fff;
+            background: #fff;
+            padding: 20px;
+            flex-direction: row;
+            justify-content: space-around;
+            margin-bottom: 20px;
+            border-radius: 10px;
+
+            .logo {
+                img {
+                    border-radius: 5px;
+                    border: 1px solid #ddd;
+                }
+            }
+
+            .name-location {
+                font-size: 20px;
+                align-items: center;
+                justify-content: center;
+
+
+                .name {
+                    font-weight: bold;
+                    margin-bottom: 10px;
+                }
+
+                .location {}
+            }
+        }
+
+        .company-content {
+            //background: linear-gradient(277.42deg, #54151C 0%, #121212 43.92%);
+            padding: 20px;
+            border-radius: 10px;
+            //color: white;
+            background: #fff;
+
+            .header {
+                font-size: 20px;
+                font-weight: bold;
+            }
+        }
+
+        .company-skills {
+            // color: white;
+            // background: linear-gradient(277.42deg, #54151C 0%, #121212 43.92%);
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+
+            .header {
+                font-size: 20px;
+                font-weight: bold;
+            }
+        }
+
+        .company-des {
+            //color: white;
+            //background: linear-gradient(277.42deg, #54151C 0%, #121212 43.92%);
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+
+            justify-content: center;
+            align-self: flex-start;
+
+            .header {
+                font-size: 20px;
+                font-weight: bold;
+            }
+
+            .des {
+                align-self: flex-start;
+                text-align: left;
+                line-height: 2;
+                font-size: 16px;
+            }
+        }
     }
 }

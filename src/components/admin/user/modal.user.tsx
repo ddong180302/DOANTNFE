@@ -2,7 +2,7 @@ import { ModalForm, ProForm, ProFormDigit, ProFormSelect, ProFormText } from "@a
 import { Col, Form, Row, message, notification } from "antd";
 import { isMobile } from 'react-device-detect';
 import { useState, useEffect } from "react";
-import { callCreateUser, callFetchCompany, callFetchRole, callUpdateUser } from "@/config/api";
+import { callCreateUser, callCreateUserHr, callFetchCompany, callFetchRole, callUpdateUser, callUpdateUserHr } from "@/config/api";
 import { IUser } from "@/types/backend";
 import { DebounceSelect } from "./debouce.select";
 
@@ -24,9 +24,6 @@ const ModalUser = (props: IProps) => {
     const { openModal, setOpenModal, reloadTable, dataInit, setDataInit } = props;
     const [companies, setCompanies] = useState<ICompanySelect[]>([]);
     const [roles, setRoles] = useState<ICompanySelect[]>([]);
-
-    console.log(roles);
-
     const [form] = Form.useForm();
 
     useEffect(() => {
@@ -54,10 +51,14 @@ const ModalUser = (props: IProps) => {
         const { name, email, password, address, age, gender, role, company, phone } = valuesForm;
         if (dataInit?._id) {
             //update
-            if (!company) {
+            if (role && role?.label !== "HR") {
+                if (company) {
+                    message.warning("Bạn không được chọn tên công ty!");
+                    return;
+                }
                 if (role?._id) {
                     const user = {
-                        _id: dataInit._id,
+                        _id: dataInit?._id,
                         name,
                         email,
                         password,
@@ -65,7 +66,7 @@ const ModalUser = (props: IProps) => {
                         gender,
                         address,
                         phone,
-                        role: role._id
+                        role: role?._id
                     }
                     const res = await callUpdateUser(user);
                     if (res.data) {
@@ -80,7 +81,7 @@ const ModalUser = (props: IProps) => {
                     }
                 } else {
                     const user = {
-                        _id: dataInit._id,
+                        _id: dataInit?._id,
                         name,
                         email,
                         password,
@@ -88,7 +89,7 @@ const ModalUser = (props: IProps) => {
                         gender,
                         address,
                         phone,
-                        role: role.value
+                        role: role?.value
                     }
                     const res = await callUpdateUser(user);
                     if (res.data) {
@@ -103,10 +104,13 @@ const ModalUser = (props: IProps) => {
                     }
                 }
             } else {
-
+                if (!company) {
+                    message.warning("Bạn cần chọn tên công ty!");
+                    return;
+                }
                 if (company?._id && role?._id) {
                     const user = {
-                        _id: dataInit._id,
+                        _id: dataInit?._id,
                         name,
                         email,
                         password,
@@ -114,13 +118,13 @@ const ModalUser = (props: IProps) => {
                         gender,
                         address,
                         phone,
-                        role: role._id,
+                        role: role?._id,
                         company: {
-                            _id: company._id,
-                            name: company.name
+                            _id: company?._id,
+                            name: company?.name
                         }
                     }
-                    const res = await callUpdateUser(user);
+                    const res = await callUpdateUserHr(user);
                     if (res.data) {
                         message.success("Cập nhật user thành công");
                         handleReset();
@@ -133,7 +137,7 @@ const ModalUser = (props: IProps) => {
                     }
                 } else if (!company?._id && !role?._id) {
                     const user = {
-                        _id: dataInit._id,
+                        _id: dataInit?._id,
                         name,
                         email,
                         password,
@@ -141,13 +145,13 @@ const ModalUser = (props: IProps) => {
                         gender,
                         address,
                         phone,
-                        role: role.value,
+                        role: role?.value,
                         company: {
-                            _id: company.value,
-                            name: company.label
+                            _id: company?.value,
+                            name: company?.label
                         }
                     }
-                    const res = await callUpdateUser(user);
+                    const res = await callUpdateUserHr(user);
                     if (res.data) {
                         message.success("Cập nhật user thành công");
                         handleReset();
@@ -161,7 +165,7 @@ const ModalUser = (props: IProps) => {
                 }
                 else if (role?._id && !company?._id) {
                     const user = {
-                        _id: dataInit._id,
+                        _id: dataInit?._id,
                         name,
                         email,
                         password,
@@ -169,13 +173,13 @@ const ModalUser = (props: IProps) => {
                         gender,
                         address,
                         phone,
-                        role: role._id,
+                        role: role?._id,
                         company: {
-                            _id: company.value,
-                            name: company.label,
+                            _id: company?.value,
+                            name: company?.label,
                         }
                     }
-                    const res = await callUpdateUser(user);
+                    const res = await callUpdateUserHr(user);
                     if (res.data) {
                         message.success("Cập nhật user thành công");
                         handleReset();
@@ -189,7 +193,7 @@ const ModalUser = (props: IProps) => {
                 }
                 else if (!role?._id && company?._id) {
                     const user = {
-                        _id: dataInit._id,
+                        _id: dataInit?._id,
                         name,
                         email,
                         password,
@@ -197,13 +201,13 @@ const ModalUser = (props: IProps) => {
                         gender,
                         address,
                         phone,
-                        role: role.value,
+                        role: role?.value,
                         company: {
-                            _id: company._id,
-                            name: company.name
+                            _id: company?._id,
+                            name: company?.name
                         }
                     }
-                    const res = await callUpdateUser(user);
+                    const res = await callUpdateUserHr(user);
                     if (res.data) {
                         message.success("Cập nhật user thành công");
                         handleReset();
@@ -219,7 +223,11 @@ const ModalUser = (props: IProps) => {
             }
         } else {
             //create
-            if (!company) {
+            if (role && role?.label !== "HR") {
+                if (company) {
+                    message.warning("Bạn không được chọn tên công ty!");
+                    return;
+                }
                 const user = {
                     name,
                     email,
@@ -242,6 +250,11 @@ const ModalUser = (props: IProps) => {
                     });
                 }
             } else {
+                if (!company) {
+                    message.warning("Bạn cần chọn tên công ty!");
+
+                    return;
+                }
                 const user = {
                     name,
                     email,
@@ -252,11 +265,11 @@ const ModalUser = (props: IProps) => {
                     phone,
                     role: role.value,
                     company: {
-                        _id: company.value,
-                        name: company.label
+                        _id: company?.value,
+                        name: company?.label
                     }
                 }
-                const res = await callCreateUser(user);
+                const res = await callCreateUserHr(user);
                 if (res.data) {
                     message.success("Thêm mới user thành công");
                     handleReset();

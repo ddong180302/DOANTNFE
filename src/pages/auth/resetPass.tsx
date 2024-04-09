@@ -44,7 +44,6 @@ const ResetPassPage = (props: IProps) => {
 
 
     return (
-
         <div className={styles["login-page"]}>
             <main className={styles.main}>
                 <div className={styles.container}>

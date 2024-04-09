@@ -90,7 +90,6 @@ const ViewUpsertJob = (props: any) => {
                     value: `${item._id}@#$${item.logo}` as string
                 }
             })
-            console.log(temp);
             return temp;
         } else return [];
     }
@@ -106,7 +105,6 @@ const ViewUpsertJob = (props: any) => {
                     value: item.name as string
                 }
             })
-            console.log(temp);
             return temp;
         } else return [];
     }

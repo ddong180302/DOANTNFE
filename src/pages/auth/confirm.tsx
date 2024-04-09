@@ -17,8 +17,6 @@ const ConfirmPage = (props: IProps) => {
 
     const { dataRegister } = props;
 
-    console.log("check data register: ", dataRegister);
-
     let location = useLocation();
     let params = new URLSearchParams(location.search);
     const callback = params?.get("callback");

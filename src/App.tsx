@@ -39,17 +39,18 @@ import ContactPage from './pages/contact';
 import JobPageHr from './pages/hr/job';
 import ViewUpsertJobHr from './components/hr/job/upsert.job';
 import ResumePageHr from './pages/hr/resume';
+import MessagePage from './pages/message';
 
 const LayoutClient = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const location = useLocation();
   const rootRef = useRef<HTMLDivElement>(null);
 
+
   useEffect(() => {
     if (rootRef && rootRef.current) {
       rootRef.current.scrollIntoView({ behavior: 'smooth' });
     }
-
   }, [location]);
 
   return (
@@ -87,6 +88,7 @@ export default function App() {
       children: [
         { index: true, element: <HomePage /> },
         { path: "job", element: <ClientJobPage /> },
+        { path: "messages", element: <MessagePage /> },
         { path: "contact", element: <ContactPage /> },
         { path: "job/:id", element: <ClientJobDetailPage /> },
         { path: "company", element: <ClientCompanyPage /> },

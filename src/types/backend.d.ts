@@ -15,6 +15,10 @@ export interface IModelPaginate<T> {
     result: T[]
 }
 
+export interface IListChat<T> {
+    data: T[]
+}
+
 export interface IAccount {
     access_token: string;
     user: {
@@ -60,7 +64,12 @@ export interface ICompany {
 export interface IChat {
     _id?: string;
     firstId?: string;
+    firstName?: string;
+    firstEmail?: string;
     secondId?: string;
+    secondName?: string;
+    secondEmail?: string;
+
     createdBy?: string;
     isDeleted?: boolean;
     deletedAt?: boolean | null;

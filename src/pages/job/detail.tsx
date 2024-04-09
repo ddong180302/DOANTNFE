@@ -1,7 +1,7 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { useState, useEffect } from 'react';
 import { ICompany, IJob } from "@/types/backend";
-import { callFetchCompanyById, callFetchJobById } from "@/config/api";
+import { callCreateChat, callFetchCompanyById, callFetchIdUser, callFetchJobById } from "@/config/api";
 import styles from 'styles/client.module.scss';
 import parse from 'html-react-parser';
 import { Col, Divider, Row, Skeleton, Tag } from "antd";
@@ -10,6 +10,7 @@ import { getLocationName } from "@/config/utils";
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import ApplyModal from "@/components/client/modal/apply.modal";
+import { useAppSelector } from "@/redux/hooks";
 dayjs.extend(relativeTime)
 
 
@@ -17,54 +18,68 @@ const ClientJobDetailPage = (props: any) => {
     const [jobDetail, setJobDetail] = useState<IJob | null>(null);
     const [companyDetail, setCompanyDetail] = useState<ICompany | null>(null);
     const [isLoading, setIsLoading] = useState<boolean>(false);
-
+    const [firstId, setFirstId] = useState<string>();
+    const [secondId, setSecondId] = useState<string>();
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+    const isAuthenticated = useAppSelector(state => state.account.isAuthenticated);
 
     let location = useLocation();
     let params = new URLSearchParams(location.search);
     const id = params?.get("id"); // job id
+    const user = useAppSelector(state => state.account.user);
+    const userId = user?._id;
+    const navigate = useNavigate();
+    console.log("user: ", user)
 
 
     useEffect(() => {
         const init = async () => {
-            if (id) {
-                setIsLoading(true)
+            if (id && !jobDetail) {
                 const res = await callFetchJobById(id);
                 if (res?.data) {
-                    setJobDetail(res.data)
+                    setJobDetail(res.data);
+                    setFirstId(userId)
                 }
-                setIsLoading(false)
             }
-            if (jobDetail?.company?._id) {
-                const idCom = jobDetail?.company?._id;
-                setIsLoading(true)
-                const resCom = await callFetchCompanyById(idCom);
-                if (resCom?.data) {
-                    setCompanyDetail(resCom?.data);
-                }
-                setIsLoading(false)
-            }
-        }
+        };
         init();
-    }, [id]);
+    }, [id, jobDetail]);
 
     useEffect(() => {
         const init = async () => {
-            if (jobDetail?.company?._id) {
-                const idCom = jobDetail?.company?._id;
-                setIsLoading(true)
+            if (jobDetail?.company?._id && !companyDetail) {
+                const idCom = jobDetail.company._id;
                 const resCom = await callFetchCompanyById(idCom);
                 if (resCom?.data) {
-                    setCompanyDetail(resCom?.data);
+                    setCompanyDetail(resCom.data);
                 }
-                setIsLoading(false)
             }
-        }
+        };
         init();
-    }, [jobDetail?.company?._id]);
+    }, [jobDetail, companyDetail]);
 
+    useEffect(() => {
+        const init = async () => {
+            if (companyDetail && !secondId) {
+                const idCom = companyDetail?._id || "";
+                const resCom = await callFetchIdUser(idCom);
+                if (resCom?.data) {
+                    setSecondId(resCom.data._id);
+                    //setFirstId(userId);
+                }
+            }
+        };
+        init();
+    }, [companyDetail, secondId]);
 
-    console.log("Check job: ", companyDetail);
+    // Định nghĩa hàm xử lý sự kiện
+    const handleChat = async () => {
+        if (isAuthenticated) {
+            navigate('/messages', { state: { firstId, secondId } });
+        } else {
+            navigate('/login');
+        }
+    };
 
     return (
         <div className={`${styles["container"]} ${styles["detail-job-section"]}`}>
@@ -105,7 +120,7 @@ const ClientJobDetailPage = (props: any) => {
                                     <HistoryOutlined /> {dayjs(jobDetail.updatedAt).fromNow()}
                                 </div>
                                 <div>
-                                    <button className={styles["btn-chat"]}>
+                                    <button className={styles["btn-chat"]} onClick={() => handleChat()}>
                                         Chat ngay
                                     </button>
                                 </div>

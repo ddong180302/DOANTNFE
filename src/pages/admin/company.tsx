@@ -16,7 +16,6 @@ import { ALL_PERMISSIONS } from "@/config/permissions";
 const CompanyPage = () => {
     const [openModal, setOpenModal] = useState<boolean>(false);
     const [dataInit, setDataInit] = useState<ICompany | null>(null);
-
     const tableRef = useRef<ActionType>();
 
     const isFetching = useAppSelector(state => state.company.isFetching);

@@ -34,7 +34,6 @@ const LayoutAdmin = () => {
     const user = useAppSelector(state => state.account.user);
 
     const permissions = useAppSelector(state => state.account.user.permissions);
-    console.log("check per: ", permissions)
 
     const [menuItems, setMenuItems] = useState<MenuProps['items']>([]);
 
@@ -130,11 +129,6 @@ const LayoutAdmin = () => {
                     key: '/admin/role',
                     icon: <ExceptionOutlined />
                 }] : []),
-                {
-                    label: <Link to='/admin/subscriber'>Subscriber</Link>,
-                    key: '/admin/subscriber',
-                    icon: <HomeOutlined />
-                },
                 {
                     label: <Link to='/'>Home</Link>,
                     key: '/',

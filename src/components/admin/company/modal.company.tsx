@@ -82,7 +82,6 @@ const ModalCompany = (props: IProps) => {
                     value: item.name as string
                 }
             })
-            console.log(temp);
             return temp;
         } else return [];
     }
@@ -128,7 +127,14 @@ const ModalCompany = (props: IProps) => {
             companySize, workingDays,
             overtimePolicy, ourkeyskills
         } = valuesForm;
-        const valuesSkill = ourkeyskills.map((item: any) => item.label);
+        //const valuesSkill = ourkeyskills.map((item: any) => item.label);
+        const valuesSkill = ourkeyskills.map((item: any) => {
+            if (item && item?.label) {
+                return item.label;
+            } else {
+                return item;
+            }
+        });
         const country = form.getFieldValue('country');
 
         if (dataLogo.length === 0) {

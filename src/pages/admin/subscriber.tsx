@@ -26,8 +26,6 @@ const SubscriberPage = () => {
     const subscribers = useAppSelector(state => state.subscriber.result);
     const dispatch = useAppDispatch();
 
-    console.log("check subs: ", subscribers)
-
     const handleDeleteUser = async (_id: string | undefined) => {
         if (_id) {
             const res = await callDeleteUser(_id);

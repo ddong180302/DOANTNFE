@@ -8,7 +8,6 @@ const RoleBaseRoute = (props: any) => {
     const userRole = user.role.name;
 
     if (userRole !== 'USER') {
-        console.log("---> :", props.children)
         return (<>{props.children}</>)
     } else {
         return (<NotPermitted />)

@@ -28,8 +28,6 @@ const ViewUpsertJobHr = (props: any) => {
     const [companyName, setCompanyName] = useState<string>();
     const [companyId, setCompanyId] = useState<string>();
     const [companyLogo, setCompanyLogo] = useState<string>();
-
-    console.log("check user: ", user);
     const navigate = useNavigate();
     const [value, setValue] = useState<string>("");
 
@@ -110,7 +108,6 @@ const ViewUpsertJobHr = (props: any) => {
                     value: `${item._id}@#$${item.logo}` as string
                 }
             })
-            console.log(temp);
             return temp;
         } else return [];
     }
@@ -126,7 +123,6 @@ const ViewUpsertJobHr = (props: any) => {
                     value: item.name as string
                 }
             })
-            console.log(temp);
             return temp;
         } else return [];
     }
