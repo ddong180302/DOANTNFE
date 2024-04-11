@@ -1,6 +1,5 @@
 import { callCountCompany, callCountJob, callCountResume, callCountUser } from "@/config/api";
 import { Card, Col, DatePicker, Form, Row, Statistic } from "antd";
-import moment from "moment";
 import { useEffect, useState } from "react";
 import CountUp from 'react-countup';
 import dayjs from 'dayjs';
@@ -91,10 +90,10 @@ const DashboardPage = (props: any) => {
             <Row gutter={[20, 20]} style={{ background: "#fff", height: "50px", borderRadius: "5px" }}>
                 <Form layout="inline" onFinish={handleDateRangeChange}>
                     <Form.Item label="Ngày bắt đầu" name="startDate">
-                        <DatePicker onChange={handleChangeStartDate} />
+                        <DatePicker onChange={handleChangeStartDate} format="DD/MM/YYYY" />
                     </Form.Item>
                     <Form.Item label="Ngày kết thúc" name="endDate">
-                        <DatePicker disabledDate={disabledEndDate} />
+                        <DatePicker disabledDate={disabledEndDate} format="DD/MM/YYYY" />
                     </Form.Item>
                     <Form.Item>
                         <button type="submit">Lọc</button>

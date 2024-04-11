@@ -1,7 +1,6 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { callFetchJob, callFetchResume, callFetchResumeByHr } from '@/config/api';
+import { callFetchResumeByHr } from '@/config/api';
 import { IResume } from '@/types/backend';
-import { useAppSelector } from '../hooks';
 
 interface IState {
     isFetching: boolean;

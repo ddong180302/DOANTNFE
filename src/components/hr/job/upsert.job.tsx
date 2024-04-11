@@ -1,6 +1,6 @@
-import { Breadcrumb, Col, ConfigProvider, Divider, Form, Input, Row, message, notification } from "antd";
+import { Breadcrumb, Col, ConfigProvider, Divider, Form, Input, Modal, Radio, Row, message, notification } from "antd";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { FooterToolbar, ProForm, ProFormDatePicker, ProFormDigit, ProFormSelect, ProFormSwitch, ProFormText } from "@ant-design/pro-components";
+import { FooterToolbar, ProForm, ProFormDigit, ProFormSelect, ProFormSwitch, ProFormText } from "@ant-design/pro-components";
 import styles from 'styles/admin.module.scss';
 import { LOCATION_LIST, SKILLS_LIST } from "@/config/utils";
 import { useState, useEffect } from 'react';
@@ -11,9 +11,9 @@ import { CheckSquareOutlined } from "@ant-design/icons";
 import enUS from 'antd/lib/locale/en_US';
 import dayjs from 'dayjs';
 import { IJob } from "@/types/backend";
-import { ICompanySelect } from "@/components/admin/user/modal.user";
 import { DebounceSelect } from "@/components/admin/user/debouce.select";
 import { useAppSelector } from "@/redux/hooks";
+import CheckOut from "./checkOut.job";
 
 export interface ISkillSelect {
     label: string;
@@ -22,7 +22,6 @@ export interface ISkillSelect {
 }
 
 const ViewUpsertJobHr = (props: any) => {
-    const [companies, setCompanies] = useState<ICompanySelect[]>([]);
     const [skills, setSkills] = useState<ISkillSelect[]>([]);
     const user = useAppSelector(state => state.account.user);
     const [companyName, setCompanyName] = useState<string>();
@@ -30,6 +29,10 @@ const ViewUpsertJobHr = (props: any) => {
     const [companyLogo, setCompanyLogo] = useState<string>();
     const navigate = useNavigate();
     const [value, setValue] = useState<string>("");
+    const [expiredAt, setExpiredAt] = useState<any>(null);
+    const [paymentAmount, setPaymentAmount] = useState<any>(null);
+    const [openModal, setOpenModal] = useState<boolean>(false);
+    const [valueJob, setValueJob] = useState<any>();
 
     let location = useLocation();
     let params = new URLSearchParams(location.search);
@@ -58,13 +61,6 @@ const ViewUpsertJobHr = (props: any) => {
                 if (res && res.data) {
                     setDataUpdate(res.data);
                     setValue(res.data.description);
-                    setCompanies([
-                        {
-                            label: res.data.company?.name as string,
-                            value: `${res.data.company?._id}@#$${res.data.company?.logo}` as string,
-                            key: res.data.company?._id
-                        }
-                    ]);
 
                     // Xử lý kỹ năng
                     const skillsData = res.data.skills.map((skill: any) => ({
@@ -97,20 +93,6 @@ const ViewUpsertJobHr = (props: any) => {
         init();
         return () => form.resetFields();
     }, [id]);
-    // Usage of DebounceSelect
-    async function fetchCompanyList(name: string): Promise<ICompanySelect[]> {
-        const res = await callFetchCompany(`current=1&pageSize=100&name=/${name}/i`);
-        if (res && res.data) {
-            const list = res.data.result;
-            const temp = list.map(item => {
-                return {
-                    label: item.name as string,
-                    value: `${item._id}@#$${item.logo}` as string
-                }
-            })
-            return temp;
-        } else return [];
-    }
 
     // Usage of DebounceSelect
     async function fetchSkillList(name: string): Promise<ISkillSelect[]> {
@@ -144,9 +126,9 @@ const ViewUpsertJobHr = (props: any) => {
                 salary: values.salary,
                 quantity: values.quantity,
                 level: values.level,
+                paymentAmount: values.paymentAmount,
                 description: value,
-                startDate: /[0-9]{2}[/][0-9]{2}[/][0-9]{4}$/.test(values.startDate) ? dayjs(values.startDate, 'DD/MM/YYYY').toDate() : values.startDate,
-                endDate: /[0-9]{2}[/][0-9]{2}[/][0-9]{4}$/.test(values.endDate) ? dayjs(values.endDate, 'DD/MM/YYYY').toDate() : values.endDate,
+                expiredAt: /[0-9]{2}[/][0-9]{2}[/][0-9]{4}$/.test(values.expiredAt) ? dayjs(values.expiredAt, 'DD/MM/YYYY').toDate() : values.expiredAt,
                 isActive: values.isActive
             }
 
@@ -162,7 +144,7 @@ const ViewUpsertJobHr = (props: any) => {
             }
         } else {
             //create
-            const cp = values?.company?.value?.split('@#$');
+
             const valuesSkill = values.skills.map((item: any) => item.label);
             const job = {
                 name: values.name,
@@ -177,24 +159,65 @@ const ViewUpsertJobHr = (props: any) => {
                 quantity: values.quantity,
                 level: values.level,
                 description: value,
-                startDate: dayjs(values.startDate, 'DD/MM/YYYY').toDate(),
-                endDate: dayjs(values.endDate, 'DD/MM/YYYY').toDate(),
+                expiredAt: expiredAt,
+                paymentAmount: paymentAmount,
                 isActive: values.isActive
             }
 
-            const res = await callCreateJob(job);
-            if (res.data) {
-                message.success("Tạo mới job thành công");
-                navigate('/hr/job')
-            } else {
-                notification.error({
-                    message: 'Có lỗi xảy ra',
-                    description: res.message
-                });
-            }
+            setValueJob(job);
+
+            setOpenModal(true)
+
+
+            // const valuesSkill = values.skills.map((item: any) => item.label);
+            // const job = {
+            //     name: values.name,
+            //     skills: valuesSkill,
+            //     company: {
+            //         _id: companyId || "",
+            //         name: companyName || "",
+            //         logo: companyLogo || ""
+            //     },
+            //     location: values.location,
+            //     salary: values.salary,
+            //     quantity: values.quantity,
+            //     level: values.level,
+            //     description: value,
+            //     expiredAt: expiredAt,
+            //     paymentAmount: paymentAmount,
+            //     isActive: values.isActive
+            // }
+
+            // const res = await callCreateJob(job);
+            // if (res.data) {
+            //     message.success("Tạo mới job thành công");
+            //     navigate('/hr/job')
+            // } else {
+            //     notification.error({
+            //         message: 'Có lỗi xảy ra',
+            //         description: res.message
+            //     });
+            // }
         }
     }
 
+    const handleDurationChange = (e: any) => {
+        const selectedDuration = e.target.value;
+        const calculatedExpirationDate = dayjs().add(selectedDuration, 'day').toDate();
+        setExpiredAt(calculatedExpirationDate);
+
+        const expirationDateObj = dayjs(calculatedExpirationDate);
+        const formattedExpirationDate = expirationDateObj.format('DD/MM/YYYY');
+
+        const equivalentSalary = selectedDuration / 15;
+        setPaymentAmount(equivalentSalary);
+        const formattedSalaryEquivalent = `${equivalentSalary}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',') + ' $';
+
+        form.setFieldsValue({
+            expiredAt: formattedExpirationDate,
+            paymentAmount: formattedSalaryEquivalent
+        });
+    };
 
 
     return (
@@ -213,7 +236,6 @@ const ViewUpsertJobHr = (props: any) => {
                 />
             </div>
             <div >
-
                 <ConfigProvider locale={enUS}>
                     <ProForm
                         form={form}
@@ -318,44 +340,49 @@ const ViewUpsertJobHr = (props: any) => {
                                 <ProForm.Item
                                     name="company"
                                     label="Thuộc Công Ty"
-
                                 >
                                     <p style={{ border: "1px solid #ddd", padding: "4px 5px", borderRadius: "5px" }}>
                                         {companyName}
                                     </p>
                                 </ProForm.Item>
                             </Col>
-
                         </Row>
-
                         <Row gutter={[20, 20]}>
-                            <Col span={24} md={6}>
-                                <ProFormDatePicker
-                                    label="Ngày bắt đầu"
-                                    name="startDate"
-                                    normalize={(value) => value && dayjs(value, 'DD/MM/YYYY')}
-                                    fieldProps={{
-                                        format: 'DD/MM/YYYY',
+                            {!id &&
 
-                                    }}
-                                    rules={[{ required: true, message: 'Vui lòng chọn ngày cấp' }]}
-                                    placeholder="dd/mm/yyyy"
-                                />
-                            </Col>
+                                <Col span={24} md={6}>
+                                    <Form.Item
+                                        label="Thời hạn (ngày)"
+                                        name="duration"
+                                        rules={[{ required: true, message: 'Vui lòng chọn thời hạn!' }]}
+                                    >
+                                        <Radio.Group onChange={handleDurationChange}>
+                                            <Radio.Button value={15}>15</Radio.Button>
+                                            <Radio.Button value={30}>30</Radio.Button>
+                                            <Radio.Button value={45}>45</Radio.Button>
+                                            <Radio.Button value={60}>60</Radio.Button>
+                                        </Radio.Group>
+                                    </Form.Item>
+                                </Col>
+                            }
                             <Col span={24} md={6}>
-                                <ProFormDatePicker
-                                    label="Ngày kết thúc"
-                                    name="endDate"
-                                    normalize={(value) => value && dayjs(value, 'DD/MM/YYYY')}
-                                    fieldProps={{
-                                        format: 'DD/MM/YYYY',
-
-                                    }}
-                                    // width="auto"
-                                    rules={[{ required: true, message: 'Vui lòng chọn ngày cấp' }]}
-                                    placeholder="dd/mm/yyyy"
-                                />
+                                <Form.Item
+                                    label="Ngày hết hạn"
+                                    name="expiredAt"
+                                >
+                                    <Input disabled />
+                                </Form.Item>
                             </Col>
+                            {!id &&
+                                <Col span={24} md={6}>
+                                    <Form.Item
+                                        label="Số tiền phải trả"
+                                        name="paymentAmount"
+                                    >
+                                        <Input disabled />
+                                    </Form.Item>
+                                </Col>
+                            }
                             <Col span={24} md={6}>
                                 <ProFormSwitch
                                     label="Trạng thái"
@@ -383,10 +410,15 @@ const ViewUpsertJobHr = (props: any) => {
                             </Col>
                         </Row>
                         <Divider />
+                        <Divider />
                     </ProForm>
                 </ConfigProvider>
-
             </div>
+            <CheckOut
+                valueJob={valueJob}
+                openModal={openModal}
+                setOpenModal={setOpenModal}
+            />
         </div>
     )
 }

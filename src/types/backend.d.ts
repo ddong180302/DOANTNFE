@@ -140,8 +140,8 @@ export interface IJob {
     quantity: number;
     level: string;
     description: string;
-    startDate: Date;
-    endDate: Date;
+    paymentAmount: number;
+    expiredAt: Date;
     isActive: boolean;
 
     createdBy?: string;

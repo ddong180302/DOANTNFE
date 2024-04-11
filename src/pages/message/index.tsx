@@ -4,18 +4,25 @@ import { useLocation } from 'react-router-dom';
 import { useEffect, useRef, useState } from 'react';
 import { callCreateChat, callFetchMessageByChatId, callCreateMessage, callFetchChatById, callMessByFirstSecondId } from '@/config/api';
 import { IChat } from '@/types/backend';
-import { useAppDispatch, useAppSelector } from '@/redux/hooks';
+import { useAppSelector } from '@/redux/hooks';
 import { io, Socket } from "socket.io-client";
 import ListMessage from '@/components/message/listMessage';
 import ListChat from '@/components/message/listChat';
+
+type Notification = {
+    senderId: string; // Đây có thể là kiểu dữ liệu thích hợp cho ID của người gửi
+    isRead: boolean;
+    date: Date;
+};
 
 type MySocketEvents = {
     message: string;
     connect: () => void;
     disconnect: () => void;
-    getOnlineUsers: (users: any[]) => void; // Định nghĩa lại sự kiện getOnlineUsers
+    getOnlineUsers: (users: any[]) => void;
     receiveMessage: (message: any) => void;
     sendMessage: (message: any) => void;
+    getNotification: (notification: Notification) => void;
 };
 
 const MessagePage = (props: any) => {
@@ -32,23 +39,11 @@ const MessagePage = (props: any) => {
     const [selectedChatName, setSelectedChatName] = useState<string | null>(null);
     const [socket, setSocket] = useState<Socket<MySocketEvents> | null>(null);
     const [onlineUsers, setOnlineUsers] = useState<any[]>([]);
-    const messageRef = useRef<HTMLDivElement>(null);
     const socketRef = useRef<Socket | null>(null);
 
     const firstId = state?.firstId;
     const secondId = state?.secondId;
     const idUser = state?.userId;
-
-
-    // Gọi thunk để fetch user chats
-    // useEffect(() => {
-    //     const newSocket = io("http://localhost:4000");
-    //     setSocket(newSocket);
-
-    //     return () => {
-    //         newSocket.disconnect()
-    //     }
-    // }, []);
 
     useEffect(() => {
         // Kết nối với server thông qua socket.io-client
@@ -130,13 +125,13 @@ const MessagePage = (props: any) => {
 
         try {
             const message = await callFetchMessageByChatId(id);
-            console.log("messs: ", message);
             const newMessages = message?.data instanceof Array ? message.data.map((item, index) => ({
                 id: item._id,
                 sender: item.senderId,
                 message: item.text,
                 updatedAt: item.updatedAt,
-                chatId: item.chatId
+                chatId: item.chatId,
+                name: name
             })) : [];
             setMessageList(newMessages);
             if (!newMessages.length) {
@@ -156,8 +151,8 @@ const MessagePage = (props: any) => {
                 text: inputMessage
             });
             if (res && res?.data) {
-                setCurrentChat(res?.data?.chatId || "");
-                setSelectedChatId(res.data.chatId || "")
+                // setCurrentChat(res?.data?.chatId || "");
+                //setSelectedChatId(res.data.chatId || "");
                 const newMessage = {
                     id: res.data._id,
                     sender: res.data.senderId,
@@ -178,14 +173,6 @@ const MessagePage = (props: any) => {
     useEffect(() => {
         if (socket) {
             socket.on("receiveMessage", (message) => {
-                // Kiểm tra xem tin nhắn thuộc về cuộc trò chuyện hiện tại không
-                console.log("mess: ", message.chatId);
-                console.log("sekc: ", selectedChatId)
-                if (message.chatId === selectedChatId) {
-                    console.log("ok")
-                } else {
-                    console.log("ko banwg")
-                }
                 if (message.chatId === selectedChatId) {
                     setSelectedChatId(message.chatId);
                     const newMessages = {
@@ -202,8 +189,7 @@ const MessagePage = (props: any) => {
                 }
             });
         }
-    }, [socket, selectedChatId, messageList]);
-
+    }, [socket, messageList, selectedChatId]);
     return (
         <div className={`${styles.container} ${styles['message-section']}`}>
             <Row gutter={[20, 20]}>
@@ -219,7 +205,6 @@ const MessagePage = (props: any) => {
                     inputMessage={inputMessage}
                     setInputMessage={setInputMessage}
                     sendMessage={sendMessage}
-                    messageRef={messageRef}
                     selectedChatName={selectedChatName}
                 />
             </Row>
