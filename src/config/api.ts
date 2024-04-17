@@ -89,6 +89,15 @@ export const callCountCompany = () => {
     return axios.post(`/api/v1/companies/count`);
 }
 
+export const callCountCompanyWithDate = (startDate: string, endDate: string) => {
+    return axios.post(`/api/v1/companies/countDate`, null, {
+        params: {
+            startDate: startDate,
+            endDate: endDate,
+        },
+    });
+}
+
 /**
  * 
 Module User
@@ -131,6 +140,15 @@ export const callUpdateInforByUser = (user: IUser) => {
 
 export const callCountUser = () => {
     return axios.post(`/api/v1/users/count`);
+}
+
+export const callCountUserWithDate = (startDate: string, endDate: string) => {
+    return axios.post(`/api/v1/users/countDate`, null, {
+        params: {
+            startDate: startDate,
+            endDate: endDate,
+        },
+    });
 }
 
 
@@ -192,6 +210,29 @@ export const callCountJob = () => {
     return axios.post(`/api/v1/jobs/count`);
 }
 
+export const callCountJobByHr = () => {
+    return axios.post(`/api/v1/jobs/count-by-hr`);
+}
+
+export const callCountJobWithDate = (startDate: string, endDate: string) => {
+    return axios.post(`/api/v1/jobs/countDate`, null, {
+        params: {
+            startDate: startDate,
+            endDate: endDate,
+        },
+    });
+}
+
+export const callCountJobByHrWithDate = (startDate: string, endDate: string) => {
+    return axios.post(`/api/v1/jobs/countDate-by-hr`, null, {
+        params: {
+            startDate: startDate,
+            endDate: endDate,
+        },
+    });
+}
+
+
 /**
  * 
 Module Resume
@@ -226,6 +267,28 @@ export const callFetchResumeByUser = () => {
 
 export const callCountResume = () => {
     return axios.post(`/api/v1/resumes/count`);
+}
+
+export const callCountResumeWithDate = (startDate: string, endDate: string) => {
+    return axios.post(`/api/v1/resumes/countDate`, null, {
+        params: {
+            startDate: startDate,
+            endDate: endDate,
+        },
+    });
+}
+
+export const callCountResumeByhr = () => {
+    return axios.post(`/api/v1/resumes/count-by-hr`);
+}
+
+export const callCountResumeByHrWithDate = (startDate: string, endDate: string) => {
+    return axios.post(`/api/v1/resumes/countDate-by-hr`, null, {
+        params: {
+            startDate: startDate,
+            endDate: endDate,
+        },
+    });
 }
 
 /**

@@ -40,6 +40,7 @@ import JobPageHr from './pages/hr/job';
 import ViewUpsertJobHr from './components/hr/job/upsert.job';
 import ResumePageHr from './pages/hr/resume';
 import MessagePage from './pages/message';
+import DashboardHrPage from './pages/hr/dashboardhr';
 
 const LayoutClient = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -182,7 +183,7 @@ export default function App() {
         {
           index: true, element:
             <ProtectedRoute>
-              <DashboardPage />
+              <DashboardHrPage />
             </ProtectedRoute>
         },
         {

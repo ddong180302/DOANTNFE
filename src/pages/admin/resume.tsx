@@ -50,8 +50,8 @@ const ResumePage = () => {
             render: (text, record, index, action) => {
                 return (
                     <a href="#" onClick={() => {
-                        setOpenViewDetail(true);
-                        setDataInit(record);
+                        //setOpenViewDetail(true);
+                        // setDataInit(record);
                     }}>
                         {record._id}
                     </a>
@@ -120,56 +120,17 @@ const ResumePage = () => {
             },
             hideInSearch: true,
         },
-        {
-            title: 'Xem CV',
-            dataIndex: "",
-            render(value, record, index) {
-                return (
-                    <a
-                        href={`${import.meta.env.VITE_BACKEND_URL}/images/resume/${record?.url}`}
-                        target="_blank"
-                    >Chi tiết</a>
-                )
-            },
-        },
         // {
-
-        //     title: 'Actions',
-        //     hideInSearch: true,
-        //     width: 50,
-        //     render: (_value, entity, _index, _action) => (
-        //         <Space>
-        //             <EditOutlined
-        //                 style={{
-        //                     fontSize: 20,
-        //                     color: '#ffa500',
-        //                 }}
-        //                 type=""
-        //                 onClick={() => {
-        //                     navigate(`/admin/job/upsert?id=${entity._id}`)
-        //                 }}
-        //             />
-
-        //             <Popconfirm
-        //                 placement="leftTop"
-        //                 title={"Xác nhận xóa resume"}
-        //                 description={"Bạn có chắc chắn muốn xóa resume này ?"}
-        //                 onConfirm={() => handleDeleteResume(entity._id)}
-        //                 okText="Xác nhận"
-        //                 cancelText="Hủy"
-        //             >
-        //                 <span style={{ cursor: "pointer", margin: "0 10px" }}>
-        //                     <DeleteOutlined
-        //                         style={{
-        //                             fontSize: 20,
-        //                             color: '#ff4d4f',
-        //                         }}
-        //                     />
-        //                 </span>
-        //             </Popconfirm>
-        //         </Space>
-        //     ),
-
+        //     title: 'Xem CV',
+        //     dataIndex: "",
+        //     render(value, record, index) {
+        //         return (
+        //             <a
+        //                 href={`${import.meta.env.VITE_BACKEND_URL}/images/resume/${record?.url}`}
+        //                 target="_blank"
+        //             >Chi tiết</a>
+        //         )
+        //     },
         // },
     ];
 

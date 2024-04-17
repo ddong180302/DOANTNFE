@@ -1,12 +1,10 @@
-import { callCountCompany, callCountCompanyWithDate, callCountJob, callCountJobWithDate, callCountResume, callCountResumeWithDate, callCountUser, callCountUserWithDate } from "@/config/api";
+import { callCountJobByHr, callCountJobByHrWithDate, callCountResumeByHrWithDate, callCountResumeByhr } from "@/config/api";
 import { Button, Card, Col, DatePicker, Form, Row, Statistic } from "antd";
 import { useEffect, useState } from "react";
 import CountUp from 'react-countup';
 import dayjs from 'dayjs';
 
-const DashboardPage = (props: any) => {
-    const [user, setUser] = useState<number | undefined>();
-    const [company, setCompany] = useState<number | undefined>();
+const DashboardHrPage = (props: any) => {
     const [job, setJob] = useState<number | undefined>();
     const [resume, setResume] = useState<number | undefined>();
     const [startDate, setStartDate] = useState<any>(null);
@@ -27,16 +25,10 @@ const DashboardPage = (props: any) => {
 
 
     const fetchData = async () => {
-        const resUser = await callCountUser();
-        setUser(resUser?.data);
-
-        const resCompany = await callCountCompany();
-        setCompany(resCompany?.data);
-
-        const resJob = await callCountJob();
+        const resJob = await callCountJobByHr();
         setJob(resJob?.data);
 
-        const resResume = await callCountResume();
+        const resResume = await callCountResumeByhr();
         setResume(resResume?.data);
     };
 
@@ -45,16 +37,10 @@ const DashboardPage = (props: any) => {
         const formattedStartDate = dayjs(startDate).toISOString();
         const formattedEndDate = dayjs(endDate).toISOString();
         if (formattedStartDate && formattedEndDate) {
-            const dataJob = await callCountJobWithDate(formattedStartDate, formattedEndDate);
+            const dataJob = await callCountJobByHrWithDate(formattedStartDate, formattedEndDate);
             setJob(dataJob?.data);
 
-            const dataUser = await callCountUserWithDate(formattedStartDate, formattedEndDate);
-            setUser(dataUser?.data);
-
-            const dataCompany = await callCountCompanyWithDate(formattedStartDate, formattedEndDate);
-            setCompany(dataCompany?.data);
-
-            const dataResume = await callCountResumeWithDate(formattedStartDate, formattedEndDate);
+            const dataResume = await callCountResumeByHrWithDate(formattedStartDate, formattedEndDate);
             setResume(dataResume?.data);
 
         }
@@ -112,25 +98,8 @@ const DashboardPage = (props: any) => {
                 </Form>
             </Row>
             <Row gutter={[20, 20]} style={{ marginTop: "20px" }}>
-                <Col span={24} md={8}>
-                    <Card title="Tất cả người dùng" bordered={false} >
-                        <Statistic
-                            title="Users"
-                            value={user}
-                            formatter={formatter}
-                        />
 
-                    </Card>
-                </Col>
-                <Col span={24} md={8}>
-                    <Card title="Tất cả công ty" bordered={false} >
-                        <Statistic
-                            title="Company"
-                            value={company}
-                            formatter={formatter}
-                        />
-                    </Card>
-                </Col>
+
                 <Col span={24} md={8}>
                     <Card title="Tất cả các Job" bordered={false} >
                         <Statistic
@@ -156,4 +125,4 @@ const DashboardPage = (props: any) => {
     )
 }
 
-export default DashboardPage;
+export default DashboardHrPage;

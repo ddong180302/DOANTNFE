@@ -9,6 +9,7 @@ import { useState, useEffect } from 'react';
 import _ from 'lodash';
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { resetSingleRole } from "@/redux/slice/roleSlide";
+import DataTable from "@/components/client/data-table";
 
 interface IProps {
     openModal: boolean;
@@ -168,6 +169,7 @@ const ModalRole = (props: IProps) => {
                                 { required: true, message: 'Vui lòng không bỏ trống' },
                             ]}
                             placeholder="Nhập name"
+                            disabled={singleRole?._id ? true : false}
                         />
                     </Col>
                     <Col lg={12} md={12} sm={24} xs={24}>
@@ -192,6 +194,7 @@ const ModalRole = (props: IProps) => {
                             fieldProps={{
                                 autoSize: { minRows: 2 }
                             }}
+                            disabled={singleRole?._id ? true : false}
                         />
                     </Col>
                     <Col span={24}>

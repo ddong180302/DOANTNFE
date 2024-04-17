@@ -28,6 +28,7 @@ const ClientJobDetailPage = (props: any) => {
     const id = params?.get("id"); // job id
     const user = useAppSelector(state => state.account.user);
     const userId = user?._id;
+    const userRole = user?.role?.name;
     const navigate = useNavigate();
     console.log("user: ", user)
 
@@ -119,11 +120,14 @@ const ClientJobDetailPage = (props: any) => {
                                 <div>
                                     <HistoryOutlined /> {dayjs(jobDetail.updatedAt).fromNow()}
                                 </div>
-                                <div>
-                                    <button className={styles["btn-chat"]} onClick={() => handleChat()}>
-                                        Chat ngay
-                                    </button>
-                                </div>
+                                {userRole === "USER"
+                                    &&
+                                    <div>
+                                        <button className={styles["btn-chat"]} onClick={() => handleChat()}>
+                                            Chat ngay
+                                        </button>
+                                    </div>
+                                }
                                 <Divider />
                                 {parse(jobDetail.description)}
                             </Col>

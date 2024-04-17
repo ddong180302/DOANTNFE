@@ -82,6 +82,7 @@ const MessagePage = (props: any) => {
                 }
             } else if (idUser) {
                 const res = await callFetchChatById(idUser);
+
                 if (res?.data instanceof Array && res.data.length > 0) {
                     setListChat([res.data]);
                 }
@@ -190,6 +191,10 @@ const MessagePage = (props: any) => {
             });
         }
     }, [socket, messageList, selectedChatId]);
+
+
+
+
     return (
         <div className={`${styles.container} ${styles['message-section']}`}>
             <Row gutter={[20, 20]}>

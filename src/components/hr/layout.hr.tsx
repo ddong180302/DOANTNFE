@@ -53,7 +53,7 @@ const LayoutHr = () => {
             )
             const full = [
                 {
-                    label: <Link to='/hr'>Dashboard</Link>,
+                    label: <Link to='/hr'>Dashboardhr</Link>,
                     key: '/hr',
                     icon: <AppstoreOutlined />
                 },
