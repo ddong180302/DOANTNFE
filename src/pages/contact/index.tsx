@@ -1,10 +1,41 @@
-import SearchClient from '@/components/client/search.client';
-import { Col, Divider, Input, Row, Form, Select, Button } from 'antd';
-import { Option } from 'antd/es/mentions';
+import { ProFormSelect } from '@ant-design/pro-components';
+import { Col, Input, Row, Form, Button, message, notification } from 'antd';
 import { Link } from 'react-router-dom';
 import styles from 'styles/client.module.scss';
+import { LOCATION_LIST } from "@/config/utils";
+import CompanyContact from '@/components/contact/company.contact';
+import { useEffect, useState } from 'react';
+import { callCreateContact, callgetUserAdmin } from '@/config/api';
+
 
 const ContactPage = (props: any) => {
+    const [form] = Form.useForm();
+
+    const [userData, setUserData] = useState<any>();
+    useEffect(() => {
+        fetchData();
+    }, [])
+    const fetchData = async () => {
+        const resUser = await callgetUserAdmin();
+        setUserData(resUser?.data);
+    };
+
+    const onFinish = async (values: any) => {
+        const { name, position, email, location, phone, nameCompany, websiteAddress } = values;
+        const response = await callCreateContact(
+            name, position, email, location, phone, nameCompany, websiteAddress
+        );
+
+        if (response.data) {
+            form.resetFields();
+            message.success("Gửi thông tin liên hệ thành công");
+        } else {
+            notification.error({
+                message: 'Có lỗi xảy ra',
+                description: "Hãy thử lại một lần nữa!"
+            });
+        }
+    };
     return (
         <div className={`${styles["container"]} ${styles["contact-section"]}`} style={{ marginTop: 20 }}>
             <Row gutter={[24, 24]} className={styles["contact"]}>
@@ -16,68 +47,73 @@ const ContactPage = (props: any) => {
                         <p>&#x2713;  Giúp bạn củng cố thương hiệu tuyển dụng với các giải pháp của Nice Job</p>
                         <p>&#x2713;  Tạo JD hấp dẫn để tiếp cận ứng viên IT chất lượng</p>
                         <p>&#x2713;  Thấu hiểu thị trường tuyển dụng ngành IT với những cập nhật mới nhất</p>
-                        <p>Hotline Đà Nẵng     0932562365</p>
+                        <p>Hotline: {userData?.address}    {userData?.phone}</p>
+                        {/* //<p>Email: {userData?.email}</p> */}
                     </div>
                     <div className={styles["bottom"]}>
-                        sadgajsdhgj
+                        <div className={styles["header"]}>
+                            Công ty hàng đầu sử dụng Nice Job
+                        </div>
+                        <div className={styles["body"]}>
+                            <CompanyContact />
+                        </div>
                     </div>
-
-
                 </Col>
                 <Col span={11} className={styles["contact-right"]}>
                     < Form
+                        form={form}
                         name="basic"
-                        // style={{ maxWidth: 600, margin: '0 auto' }}
-                        //onFinish={onFinish}
                         autoComplete="off"
+                        onFinish={onFinish}
                     >
                         <Form.Item
                             className={styles["item"]}
-                            labelCol={{ span: 24 }} //whole column
-                            label="Họ tên"
+                            labelCol={{ span: 24 }}
+                            label="Họ và tên"
                             name="name"
                             rules={[{ required: true, message: 'Họ tên không được để trống!' }]}
                         >
-                            <Input />
+                            <Input placeholder='Công Nguyễn' />
                         </Form.Item>
 
                         <Form.Item
-                            labelCol={{ span: 24 }
-                            } //whole column
-                            label="Email"
+                            className={styles["item"]}
+                            labelCol={{ span: 24 }}
+                            label="Chức vụ"
+                            name="position"
+                            rules={[{ required: true, message: 'Chức vụ không được để trống!' }]}
+                        >
+                            <Input placeholder='Trưởng phòng nhân sự' />
+                        </Form.Item>
+
+                        <Form.Item
+                            className={styles["item"]}
+                            labelCol={{ span: 24 }}
+                            label="Email công ty"
                             name="email"
                             rules={[{ required: true, message: 'Email không được để trống!' }]}
                         >
-                            <Input type='email' />
-                        </Form.Item>
-                        <Form.Item
-                            labelCol={{ span: 24 }} //whole column
-                            name="gender"
-                            label="Giới tính"
-                            rules={[{ required: true, message: 'Giới tính không được để trống!' }]}
-                        >
-                            <Select
-                                // placeholder="Select a option and change input text above"
-                                // onChange={onGenderChange}
-                                allowClear
-                                popupMatchSelectWidth
-                            >
-                                <Option value="male">Nam</Option>
-                                <Option value="female">Nữ</Option>
-                                <Option value="other">Khác</Option>
-                            </Select>
+                            <Input type='email' placeholder='nicejob@gmail.com' />
                         </Form.Item>
 
+
+
                         <Form.Item
-                            labelCol={{ span: 24 }} //whole column
+                            className={styles["item"]}
+                            labelCol={{ span: 24 }}
                             label="Địa chỉ"
-                            name="address"
-                            rules={[{ required: true, message: 'Địa chỉ không được để trống!' }]}
                         >
-                            <Input />
+                            <ProFormSelect
+                                name="location"
+                                options={LOCATION_LIST.filter(item => item.value !== 'ALL')}
+                                placeholder="Da Nang"
+                                rules={[{ required: true, message: 'Vui lòng chọn địa điểm!' }]}
+                            />
                         </Form.Item>
 
+
                         <Form.Item
+                            className={styles["item"]}
                             labelCol={{ span: 24 }}
                             label="Số điện thoại"
                             name="phone"
@@ -92,16 +128,36 @@ const ContactPage = (props: any) => {
                                 }
                             ]}
                         >
-                            <Input />
+                            <Input placeholder='0933235689' />
                         </Form.Item>
 
-                        < Form.Item
-                        // wrapperCol={{ offset: 6, span: 16 }}
+                        <Form.Item
+                            className={styles["item"]}
+                            labelCol={{ span: 24 }}
+                            label="Tên Công ty"
+                            name="nameCompany"
+                            rules={[{ required: true, message: 'Tên Công ty không được để trống!' }]}
                         >
-                            <Button type="primary" htmlType="submit" >
+                            <Input placeholder='Công ty cổ phần Nice Job' />
+                        </Form.Item>
+
+                        <Form.Item
+                            className={styles["item"]}
+                            labelCol={{ span: 24 }}
+                            label="Địa chỉ Website"
+                            name="websiteAddress"
+                            rules={[{
+                                required: true, message: 'Địa chỉ Website không được để trống!'
+                            }]}
+                        >
+                            <Input placeholder='https://nicejob.com' />
+                        </Form.Item>
+
+                        < Form.Item>
+                            <Button type="primary" htmlType="submit" style={{ marginRight: "20px" }} >
                                 Liên hệ tôi
                             </Button>
-                            Or Đã có tài khoản khách hàng ?<Link to='/login' > Đăng Nhập </Link>
+                            Đã có tài khoản khách hàng ?<Link to='/login' > Đăng Nhập </Link>
                         </Form.Item>
                     </Form>
                 </Col>

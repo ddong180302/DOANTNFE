@@ -1,9 +1,8 @@
 import { callFetchCompany } from '@/config/api';
 import { convertSlug } from '@/config/utils';
 import { ICompany } from '@/types/backend';
-import { Card, Col, Divider, Empty, Pagination, Row, Spin, Tag } from 'antd';
+import { Card, Col, Empty, Pagination, Row, Spin } from 'antd';
 import { useState, useEffect } from 'react';
-import { isMobile } from 'react-device-detect';
 import { Link, useNavigate } from 'react-router-dom';
 import styles from 'styles/client.module.scss';
 
@@ -11,30 +10,22 @@ interface IProps {
     showPagination?: boolean;
 }
 
-const CompanyCard = (props: IProps) => {
+const CompanyContact = (props: IProps) => {
     const { showPagination = false } = props;
     const [displayCompany, setDisplayCompany] = useState<ICompany[] | null>(null);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [current, setCurrent] = useState(1);
-    const [pageSize, setPageSize] = useState(9);
+    const [pageSize, setPageSize] = useState(6);
     const [total, setTotal] = useState(0);
-    const [filter, setFilter] = useState("");
-    const [sortQuery, setSortQuery] = useState("sort=-updatedAt");
     const navigate = useNavigate();
 
     useEffect(() => {
         fetchCompany();
-    }, [current, pageSize, filter, sortQuery]);
+    }, [current, pageSize]);
 
     const fetchCompany = async () => {
         setIsLoading(true)
         let query = `current=${current}&pageSize=${pageSize}`;
-        if (filter) {
-            query += `&${filter}`;
-        }
-        if (sortQuery) {
-            query += `&${sortQuery}`;
-        }
 
         const res = await callFetchCompany(query);
         if (res && res.data) {
@@ -62,20 +53,10 @@ const CompanyCard = (props: IProps) => {
     }
 
     return (
-        <div className={`${styles["company-section"]}`}>
-            <div className={styles["company-content"]}>
+        <div>
+            <div>
                 <Spin spinning={isLoading} tip="Loading...">
                     <Row gutter={[20, 20]}>
-                        <Col span={24}>
-                            <div className={isMobile ? styles["dflex-mobile"] : styles["dflex-pc"]}>
-                                <span className={styles["title"]}>Nhà Tuyển Dụng Hàng Đầu</span>
-                                {
-                                    !showPagination &&
-                                    <Link to="company">Xem tất cả</Link>
-                                }
-                            </div>
-                        </Col>
-
                         {
                             displayCompany?.map(item => {
                                 return (
@@ -89,18 +70,6 @@ const CompanyCard = (props: IProps) => {
                                                     alt="example"
                                                     src={`${import.meta.env.VITE_BACKEND_URL}/images/company/${item?.logo}`}
                                                 />
-                                            </div>
-                                            <div>
-                                                <h3 style={{ textAlign: "center", paddingBottom: "20px", fontSize: "18px" }}>{item.name}</h3>
-                                            </div>
-                                            <div className={styles["skills"]}>
-                                                {item?.ourkeyskills?.map((item, index) => {
-                                                    return (
-                                                        <Tag key={`${index}-key`} color="gold" style={{ padding: "2px 10px", marginBottom: "5px" }} >
-                                                            {item}
-                                                        </Tag>
-                                                    )
-                                                })}
                                             </div>
                                         </Card>
                                     </Col>
@@ -136,4 +105,4 @@ const CompanyCard = (props: IProps) => {
     )
 }
 
-export default CompanyCard;
+export default CompanyContact;

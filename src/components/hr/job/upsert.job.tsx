@@ -33,7 +33,6 @@ const ViewUpsertJobHr = (props: any) => {
     const [paymentAmount, setPaymentAmount] = useState<any>(null);
     const [openModal, setOpenModal] = useState<boolean>(false);
     const [valueJob, setValueJob] = useState<any>();
-
     let location = useLocation();
     let params = new URLSearchParams(location.search);
     const id = params?.get("id"); // job id
@@ -163,41 +162,8 @@ const ViewUpsertJobHr = (props: any) => {
                 paymentAmount: paymentAmount,
                 isActive: values.isActive
             }
-
             setValueJob(job);
-
             setOpenModal(true)
-
-
-            // const valuesSkill = values.skills.map((item: any) => item.label);
-            // const job = {
-            //     name: values.name,
-            //     skills: valuesSkill,
-            //     company: {
-            //         _id: companyId || "",
-            //         name: companyName || "",
-            //         logo: companyLogo || ""
-            //     },
-            //     location: values.location,
-            //     salary: values.salary,
-            //     quantity: values.quantity,
-            //     level: values.level,
-            //     description: value,
-            //     expiredAt: expiredAt,
-            //     paymentAmount: paymentAmount,
-            //     isActive: values.isActive
-            // }
-
-            // const res = await callCreateJob(job);
-            // if (res.data) {
-            //     message.success("Tạo mới job thành công");
-            //     navigate('/hr/job')
-            // } else {
-            //     notification.error({
-            //         message: 'Có lỗi xảy ra',
-            //         description: res.message
-            //     });
-            // }
         }
     }
 
@@ -349,7 +315,6 @@ const ViewUpsertJobHr = (props: any) => {
                         </Row>
                         <Row gutter={[20, 20]}>
                             {!id &&
-
                                 <Col span={24} md={6}>
                                     <Form.Item
                                         label="Thời hạn (ngày)"

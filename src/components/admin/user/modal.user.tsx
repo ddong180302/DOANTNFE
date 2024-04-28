@@ -27,25 +27,47 @@ const ModalUser = (props: IProps) => {
     const [form] = Form.useForm();
 
     useEffect(() => {
-        if (dataInit?._id) {
+        if (openModal && dataInit?._id) {
             if (dataInit?.company) {
                 const companyObject = {
                     label: dataInit.company.name,
                     value: dataInit.company._id,
                     key: dataInit.company._id,
                 };
-                setCompanies(companyObject as any);
+                setCompanies([companyObject]);
             }
             if (dataInit?.role) {
                 const roleObject = {
-                    label: dataInit.role?.name,
-                    value: dataInit.role?._id,
-                    key: dataInit.role?._id,
+                    label: dataInit.role.name,
+                    value: dataInit.role._id,
+                    key: dataInit.role._id,
                 };
-                setRoles(roleObject as any);
+                setRoles([roleObject]);
             }
+            form.setFieldsValue({
+                email: dataInit.email,
+                password: dataInit.password,
+                name: dataInit.name,
+                age: dataInit.age,
+                gender: dataInit.gender,
+                address: dataInit.address,
+                phone: dataInit.phone,
+            });
+        } else {
+            // Clear form data when dataInit is null or undefined
+            setCompanies([]);
+            setRoles([]);
+            form.setFieldsValue({
+                email: "",
+                password: "",
+                name: "",
+                age: "",
+                gender: "",
+                address: "",
+                phone: "",
+            });
         }
-    }, [dataInit]);
+    }, [openModal, dataInit, form]);
 
     const submitUser = async (valuesForm: any) => {
         const { name, email, password, address, age, gender, role, company, phone } = valuesForm;
@@ -285,7 +307,9 @@ const ModalUser = (props: IProps) => {
     }
 
     const handleReset = async () => {
+        console.log("check")
         form.resetFields();
+        form.setFieldsValue(null);
         setDataInit(null);
         setCompanies([]);
         setRoles([]);
@@ -325,10 +349,10 @@ const ModalUser = (props: IProps) => {
         <>
             <ModalForm
                 title={<>{dataInit?._id ? "Cập nhật User" : "Tạo mới User"}</>}
-                open={openModal}
+                visible={openModal}
                 modalProps={{
-                    onCancel: () => { handleReset() },
-                    afterClose: () => handleReset(),
+                    onCancel: handleReset,
+                    afterClose: handleReset,
                     destroyOnClose: true,
                     width: isMobile ? "100%" : 900,
                     keyboard: false,
@@ -340,7 +364,7 @@ const ModalUser = (props: IProps) => {
                 preserve={false}
                 form={form}
                 onFinish={submitUser}
-                initialValues={dataInit?._id ? dataInit : {}}
+                initialValues={openModal ? (dataInit?._id ? dataInit : {}) : {}}
             >
                 <Row gutter={16}>
                     <Col lg={12} md={12} sm={24} xs={24}>
@@ -351,7 +375,7 @@ const ModalUser = (props: IProps) => {
                                 { required: true, message: 'Vui lòng không bỏ trống' },
                                 { type: 'email', message: 'Vui lòng nhập email hợp lệ' }
                             ]}
-                            placeholder="Nhập email"
+                            placeholder={"Vui lòng nhập email"}
                         />
                     </Col>
                     <Col lg={12} md={12} sm={24} xs={24}>
@@ -368,7 +392,7 @@ const ModalUser = (props: IProps) => {
                             label="Tên hiển thị"
                             name="name"
                             rules={[{ required: true, message: 'Vui lòng không bỏ trống' }]}
-                            placeholder="Nhập tên hiển thị"
+                            placeholder={"Vui lòng nhập name"}
                         />
                     </Col>
                     <Col lg={6} md={6} sm={24} xs={24}>

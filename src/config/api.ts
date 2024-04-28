@@ -65,6 +65,10 @@ export const callCreateCompany = (name: string, address: string, country: string
     return axios.post<IBackendRes<ICompany>>('/api/v1/companies', { name, address, country, companyType, companySize, workingDays, overtimePolicy, ourkeyskills, description, logo })
 }
 
+export const callCreateContact = (name: string, position: string, email: string, location: string, phone: string, nameCompany: string, websiteAddress: string) => {
+    return axios.post('/api/v1/companies/contact', { name, position, email, location, phone, nameCompany, websiteAddress })
+}
+
 export const callGetCompanyByUser = () => {
     return axios.post<IBackendRes<ICompany>>('/api/v1/companies/by-user');
 }
@@ -141,6 +145,12 @@ export const callUpdateInforByUser = (user: IUser) => {
 export const callCountUser = () => {
     return axios.post(`/api/v1/users/count`);
 }
+
+
+export const callgetUserAdmin = () => {
+    return axios.post(`/api/v1/users/getUserAdmin`);
+}
+
 
 export const callCountUserWithDate = (startDate: string, endDate: string) => {
     return axios.post(`/api/v1/users/countDate`, null, {

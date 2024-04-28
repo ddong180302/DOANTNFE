@@ -1,4 +1,4 @@
-import { Breadcrumb, Col, ConfigProvider, Divider, Form, Row, message, notification } from "antd";
+import { Breadcrumb, Col, ConfigProvider, Divider, Form, Input, Radio, Row, message, notification } from "antd";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { DebounceSelect } from "../user/debouce.select";
 import { FooterToolbar, ProForm, ProFormDatePicker, ProFormDigit, ProFormSelect, ProFormSwitch, ProFormText } from "@ant-design/pro-components";
@@ -6,7 +6,7 @@ import styles from 'styles/admin.module.scss';
 import { LOCATION_LIST, SKILLS_LIST } from "@/config/utils";
 import { ICompanySelect } from "../user/modal.user";
 import { useState, useEffect } from 'react';
-import { callCreateJob, callFetchCompany, callFetchJobById, callFetchSkill, callUpdateJob } from "@/config/api";
+import { callFetchCompany, callFetchJobById, callFetchSkill, callUpdateJob } from "@/config/api";
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import { CheckSquareOutlined } from "@ant-design/icons";
@@ -23,10 +23,8 @@ export interface ISkillSelect {
 const ViewUpsertJob = (props: any) => {
     const [companies, setCompanies] = useState<ICompanySelect[]>([]);
     const [skills, setSkills] = useState<ISkillSelect[]>([]);
-
     const navigate = useNavigate();
     const [value, setValue] = useState<string>("");
-
     let location = useLocation();
     let params = new URLSearchParams(location.search);
     const id = params?.get("id"); // job id
@@ -48,7 +46,6 @@ const ViewUpsertJob = (props: any) => {
                         }
                     ]);
 
-                    // Xử lý kỹ năng
                     const skillsData = res.data.skills.map((skill: any) => ({
                         label: skill,
                         value: skill,
@@ -57,7 +54,6 @@ const ViewUpsertJob = (props: any) => {
 
                     setSkills(skillsData);
 
-                    // Định dạng giá trị cho trường kỹ năng
                     const formattedSkills = res.data.skills.map((skill: any) => ({
                         label: skill,
                         value: skill,
@@ -79,7 +75,6 @@ const ViewUpsertJob = (props: any) => {
         init();
         return () => form.resetFields();
     }, [id]);
-    // Usage of DebounceSelect
     async function fetchCompanyList(name: string): Promise<ICompanySelect[]> {
         const res = await callFetchCompany(`current=1&pageSize=100&name=/${name}/i`);
         if (res && res.data) {
@@ -94,7 +89,6 @@ const ViewUpsertJob = (props: any) => {
         } else return [];
     }
 
-    // Usage of DebounceSelect
     async function fetchSkillList(name: string): Promise<ISkillSelect[]> {
         const res = await callFetchSkill(`current=1&pageSize=100&name=/${name}/i`);
         if (res && res.data) {
@@ -125,10 +119,10 @@ const ViewUpsertJob = (props: any) => {
                 location: values.location,
                 salary: values.salary,
                 quantity: values.quantity,
+                paymentAmount: values.paymentAmount,
                 level: values.level,
                 description: value,
-                startDate: /[0-9]{2}[/][0-9]{2}[/][0-9]{4}$/.test(values.startDate) ? dayjs(values.startDate, 'DD/MM/YYYY').toDate() : values.startDate,
-                endDate: /[0-9]{2}[/][0-9]{2}[/][0-9]{4}$/.test(values.endDate) ? dayjs(values.endDate, 'DD/MM/YYYY').toDate() : values.endDate,
+                expiredAt: /[0-9]{2}[/][0-9]{2}[/][0-9]{4}$/.test(values.expiredAt) ? dayjs(values.expiredAt, 'DD/MM/YYYY').toDate() : values.expiredAt,
                 isActive: values.isActive
             }
 
@@ -142,42 +136,21 @@ const ViewUpsertJob = (props: any) => {
                     description: res.message
                 });
             }
-        } else {
-            //create
-            const cp = values?.company?.value?.split('@#$');
-            const valuesSkill = values.skills.map((item: any) => item.label);
-            const job = {
-                name: values.name,
-                skills: valuesSkill,
-                company: {
-                    _id: cp && cp.length > 0 ? cp[0] : "",
-                    name: values.company.label,
-                    logo: cp && cp.length > 1 ? cp[1] : ""
-                },
-                location: values.location,
-                salary: values.salary,
-                quantity: values.quantity,
-                level: values.level,
-                description: value,
-                startDate: dayjs(values.startDate, 'DD/MM/YYYY').toDate(),
-                endDate: dayjs(values.endDate, 'DD/MM/YYYY').toDate(),
-                isActive: values.isActive
-            }
-
-            const res = await callCreateJob(job);
-            if (res.data) {
-                message.success("Tạo mới job thành công");
-                navigate('/admin/job')
-            } else {
-                notification.error({
-                    message: 'Có lỗi xảy ra',
-                    description: res.message
-                });
-            }
         }
+
     }
 
 
+    const handleDurationChange = (e: any) => {
+        const selectedDuration = e.target.value;
+        const calculatedExpirationDate = dayjs().add(selectedDuration, 'day').toDate();
+        const expirationDateObj = dayjs(calculatedExpirationDate);
+        const formattedExpirationDate = expirationDateObj.format('DD/MM/YYYY');
+
+        form.setFieldsValue({
+            expiredAt: formattedExpirationDate,
+        });
+    };
 
     return (
         <div className={styles["upsert-job-container"]}>
@@ -204,7 +177,7 @@ const ViewUpsertJob = (props: any) => {
                             {
                                 searchConfig: {
                                     resetText: "Hủy",
-                                    submitText: <>{dataUpdate?._id ? "Cập nhật Job" : "Tạo mới Job"}</>
+                                    submitText: <>{dataUpdate?._id ? "Cập nhật Job" : ""}</>
                                 },
                                 onReset: () => navigate('/admin/job'),
                                 render: (_: any, dom: any) => <FooterToolbar>{dom}</FooterToolbar>,
@@ -324,32 +297,29 @@ const ViewUpsertJob = (props: any) => {
                         </Row>
 
                         <Row gutter={[20, 20]}>
+                            {!id &&
+                                <Col span={24} md={6}>
+                                    <Form.Item
+                                        label="Thời hạn (ngày)"
+                                        name="duration"
+                                        rules={[{ required: true, message: 'Vui lòng chọn thời hạn!' }]}
+                                    >
+                                        <Radio.Group onChange={handleDurationChange}>
+                                            <Radio.Button value={15}>15</Radio.Button>
+                                            <Radio.Button value={30}>30</Radio.Button>
+                                            <Radio.Button value={45}>45</Radio.Button>
+                                            <Radio.Button value={60}>60</Radio.Button>
+                                        </Radio.Group>
+                                    </Form.Item>
+                                </Col>
+                            }
                             <Col span={24} md={6}>
-                                <ProFormDatePicker
-                                    label="Ngày bắt đầu"
-                                    name="startDate"
-                                    normalize={(value) => value && dayjs(value, 'DD/MM/YYYY')}
-                                    fieldProps={{
-                                        format: 'DD/MM/YYYY',
-
-                                    }}
-                                    rules={[{ required: true, message: 'Vui lòng chọn ngày cấp' }]}
-                                    placeholder="dd/mm/yyyy"
-                                />
-                            </Col>
-                            <Col span={24} md={6}>
-                                <ProFormDatePicker
-                                    label="Ngày kết thúc"
-                                    name="endDate"
-                                    normalize={(value) => value && dayjs(value, 'DD/MM/YYYY')}
-                                    fieldProps={{
-                                        format: 'DD/MM/YYYY',
-
-                                    }}
-                                    // width="auto"
-                                    rules={[{ required: true, message: 'Vui lòng chọn ngày cấp' }]}
-                                    placeholder="dd/mm/yyyy"
-                                />
+                                <Form.Item
+                                    label="Ngày hết hạn"
+                                    name="expiredAt"
+                                >
+                                    <Input disabled />
+                                </Form.Item>
                             </Col>
                             <Col span={24} md={6}>
                                 <ProFormSwitch

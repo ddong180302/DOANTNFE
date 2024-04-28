@@ -3,6 +3,7 @@ import { Col, Form, Row, message, notification } from "antd";
 import { isMobile } from 'react-device-detect';
 import { callCreateSkill, callUpdateSkill } from "@/config/api";
 import { ISkill } from "@/types/backend";
+import { useEffect } from "react";
 
 interface IProps {
     openModal: boolean;
@@ -16,6 +17,19 @@ const ModalSkill = (props: IProps) => {
     const { openModal, setOpenModal, reloadTable, dataInit, setDataInit } = props;
 
     const [form] = Form.useForm();
+
+    useEffect(() => {
+        if (openModal && dataInit) {
+            form.setFieldsValue({
+                name: dataInit.name,
+            });
+        } else {
+            form.setFieldsValue({
+                name: "",
+            });
+        }
+    }, [openModal, dataInit, form]);
+
 
     const submitUser = async (valuesForm: any) => {
         const { name } = valuesForm;
@@ -34,9 +48,6 @@ const ModalSkill = (props: IProps) => {
             }
         } else {
             //create
-            const user = {
-                name
-            }
             const res = await callCreateSkill(name);
             if (res.data) {
                 message.success("Thêm mới skill thành công");

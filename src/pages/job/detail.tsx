@@ -73,7 +73,7 @@ const ClientJobDetailPage = (props: any) => {
         init();
     }, [companyDetail, secondId]);
 
-    // Định nghĩa hàm xử lý sự kiện
+
     const handleChat = async () => {
         if (isAuthenticated) {
             navigate('/messages', { state: { firstId, secondId } });

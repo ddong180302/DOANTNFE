@@ -192,6 +192,13 @@
                 color: #e6dddd;
                 padding: 10px 0;
             }
+
+            p {
+                font-size: 18px;
+                line-height: normal;
+                padding: 10px 0;
+                color: #e6dddd;
+            }
         }
 
         .content3 {
@@ -299,7 +306,6 @@
         padding-top: 50px;
 
         .card {
-
             background: #ddd;
             height: 400px;
 
@@ -659,6 +665,37 @@
                 height: 100%;
                 background: #fff;
                 border-radius: 10px;
+                color: #000;
+                padding: 20px;
+
+                .header {
+                    font-size: 24px;
+                    font-weight: bold;
+                    align-items: center;
+                    justify-content: center;
+                    display: flex;
+                    margin-bottom: 20px;
+                }
+
+                .body {
+                    .card {
+                        background: #ddd;
+
+                        .card-customize {
+                            height: 100px;
+                            width: 100px;
+                            margin: 10px auto 10px auto;
+
+                            img {
+                                overflow: hidden;
+                                box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+                                border-radius: 10px;
+                                height: 100px;
+                                width: 100px;
+                            }
+                        }
+                    }
+                }
             }
         }
 
@@ -669,8 +706,11 @@
             background: #fff;
             height: 800px;
             border-radius: 10px;
+            padding: 20px;
 
-            .item {}
+            .item {
+                margin-bottom: 20px;
+            }
         }
 
     }

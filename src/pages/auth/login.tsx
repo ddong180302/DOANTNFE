@@ -132,7 +132,6 @@ const LoginPage = () => {
                                 </Form.Item>
 
                                 <Form.Item
-                                // wrapperCol={{ offset: 6, span: 16 }}
                                 >
                                     <Button style={{ width: "100%", marginTop: "10px" }} type="primary" htmlType="submit" loading={isSubmit} disabled={isSendMail}>
                                         Đăng nhập
