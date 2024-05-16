@@ -154,7 +154,7 @@ const Header = (props: any) => {
                                     theme={{
                                         token: {
                                             colorPrimary: '#fff',
-                                            colorBgContainer: '#222831',
+                                            colorBgContainer: 'transparent',
                                             colorText: '#a7a7a7',
                                         },
                                     }}

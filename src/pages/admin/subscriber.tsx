@@ -78,20 +78,6 @@ const SubscriberPage = () => {
         },
 
         {
-            // title: 'Kỹ năng',
-            // dataIndex: ["skills"],
-            // sorter: true,
-            // title: 'Kỹ năng',
-            // dataIndex: 'skills',
-            // sorter: true,
-            // render: (skills: string[] | undefined) => (
-            //     <span>
-            //         {Array.isArray(skills) && skills.map(skill => (
-            //             <p key={skill}>{skill}</p>
-            //         ))}
-            //     </span>
-            // ),
-
             title: 'Skills',
             key: 'Skills',
             dataIndex: 'Skills',
@@ -136,53 +122,53 @@ const SubscriberPage = () => {
             },
             hideInSearch: true,
         },
-        {
-            title: 'Actions',
-            hideInSearch: true,
-            width: 100,
-            render: (_value, entity, _index, _action) => (
-                <Space>
-                    <Access
-                        permission={ALL_PERMISSIONS.USERS.UPDATE}
-                        hideChildren
-                    >
-                        <EditOutlined
-                            style={{
-                                fontSize: 20,
-                                color: '#ffa500',
-                            }}
-                            onClick={() => {
-                                setOpenModal(true);
-                                setDataInit(entity);
-                            }}
-                        />
-                    </Access>
-                    <Access
-                        permission={ALL_PERMISSIONS.USERS.DELETE}
-                        hideChildren
-                    >
-                        <Popconfirm
-                            placement="leftTop"
-                            title={"Xác nhận xóa subscriber"}
-                            description={"Bạn có chắc chắn muốn xóa subscriber này ?"}
-                            onConfirm={() => handleDeleteUser(entity._id)}
-                            okText="Xác nhận"
-                            cancelText="Hủy"
-                        >
-                            <span style={{ cursor: "pointer", margin: "0 10px" }}>
-                                <DeleteOutlined
-                                    style={{
-                                        fontSize: 20,
-                                        color: '#ff4d4f',
-                                    }}
-                                />
-                            </span>
-                        </Popconfirm>
-                    </Access>
-                </Space>
-            ),
+        // {
+        //     title: 'Actions',
+        //     hideInSearch: true,
+        //     width: 100,
+        //     render: (_value, entity, _index, _action) => (
+        //         <Space>
+        //             <Access
+        //                 permission={ALL_PERMISSIONS.USERS.UPDATE}
+        //                 hideChildren
+        //             >
+        //                 <EditOutlined
+        //                     style={{
+        //                         fontSize: 20,
+        //                         color: '#ffa500',
+        //                     }}
+        //                     onClick={() => {
+        //                         setOpenModal(true);
+        //                         setDataInit(entity);
+        //                     }}
+        //                 />
+        //             </Access>
+        //             <Access
+        //                 permission={ALL_PERMISSIONS.USERS.DELETE}
+        //                 hideChildren
+        //             >
+        //                 <Popconfirm
+        //                     placement="leftTop"
+        //                     title={"Xác nhận xóa subscriber"}
+        //                     description={"Bạn có chắc chắn muốn xóa subscriber này ?"}
+        //                     onConfirm={() => handleDeleteUser(entity._id)}
+        //                     okText="Xác nhận"
+        //                     cancelText="Hủy"
+        //                 >
+        //                     <span style={{ cursor: "pointer", margin: "0 10px" }}>
+        //                         <DeleteOutlined
+        //                             style={{
+        //                                 fontSize: 20,
+        //                                 color: '#ff4d4f',
+        //                             }}
+        //                         />
+        //                     </span>
+        //                 </Popconfirm>
+        //             </Access>
+        //         </Space>
+        //     ),
 
-        },
+        // },
     ];
 
     const buildQuery = (params: any, sort: any, filter: any) => {
@@ -243,32 +229,19 @@ const SubscriberPage = () => {
                         }
                     }
                     rowSelection={false}
-                    toolBarRender={(_action, _rows): any => {
-                        return (
-                            <Button
-                                icon={<PlusOutlined />}
-                                type="primary"
-                                onClick={() => setOpenModal(true)}
-                            >
-                                Thêm mới
-                            </Button>
-                        );
-                    }}
+                // toolBarRender={(_action, _rows): any => {
+                //     return (
+                //         <Button
+                //             icon={<PlusOutlined />}
+                //             type="primary"
+                //             onClick={() => setOpenModal(true)}
+                //         >
+                //             Thêm mới
+                //         </Button>
+                //     );
+                // }}
                 />
             </Access>
-            {/* <ModalUser
-                openModal={openModal}
-                setOpenModal={setOpenModal}
-                reloadTable={reloadTable}
-                dataInit={dataInit}
-                setDataInit={setDataInit}
-            /> */}
-            {/* <ViewDetailUser
-                onClose={setOpenViewDetail}
-                open={openViewDetail}
-                dataInit={dataInit}
-                setDataInit={setDataInit}
-            /> */}
         </div>
     )
 }

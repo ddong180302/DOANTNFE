@@ -174,7 +174,7 @@ const LayoutHr = () => {
                         <Outlet />
                     </Content>
                     <Footer style={{ padding: 10, textAlign: 'center' }}>
-                        React Typescript series Nest.JS &copy; Made with <HeartTwoTone />
+                        Đồ án tốt nghiệp nhóm 29 <HeartTwoTone />
                     </Footer>
                 </Layout>
             </Layout>
