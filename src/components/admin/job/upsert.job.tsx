@@ -60,6 +60,12 @@ const ViewUpsertJob = (props: any) => {
                         key: skill
                     }));
 
+                    // Convert expiredAt to "dd/mm/yyyy" format
+                    const expiredAtDate = new Date(res.data.expiredAt);
+                    const formattedExpiredAt = `${expiredAtDate.getDate().toString().padStart(2, '0')}/${(expiredAtDate.getMonth() + 1).toString().padStart(2, '0')}/${expiredAtDate.getFullYear()}`;
+
+
+
                     form.setFieldsValue({
                         ...res.data,
                         company: {
@@ -67,7 +73,8 @@ const ViewUpsertJob = (props: any) => {
                             value: `${res.data.company?._id}@#$${res.data.company?.logo}` as string,
                             key: res.data.company?._id
                         },
-                        skills: formattedSkills // Đặt giá trị cho trường skills
+                        skills: formattedSkills, // Đặt giá trị cho trường skills
+                        expiredAt: formattedExpiredAt
                     });
                 }
             }

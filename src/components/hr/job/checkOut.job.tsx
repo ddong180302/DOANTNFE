@@ -3,19 +3,21 @@ import { Col, Form, Input, Modal, Row, message, notification } from "antd";
 import { FaCcPaypal } from "react-icons/fa";
 import { PayPalButton } from "react-paypal-button-v2";
 import { useEffect, useState } from "react";
-import { callCreateJob } from "@/config/api";
+import { callCreateJob, callUpdateJob } from "@/config/api";
 import { useNavigate } from "react-router-dom";
 interface IProps {
     openModal: boolean;
     setOpenModal: (v: boolean) => void;
     valueJob: any;
+    valueJobUpdate: any;
+    paymentAmountNew: any;
+    idUpdate: any;
 }
 
 
 const CheckOut = (props: IProps) => {
-    const { openModal, setOpenModal, valueJob } = props;
-    console.log("check value job: ", valueJob)
-    const amount = valueJob?.paymentAmount;
+    const { openModal, setOpenModal, valueJob, valueJobUpdate, paymentAmountNew, idUpdate } = props;
+    const amount = valueJob?.paymentAmount || paymentAmountNew;
     const [scriptLoaded, setScriptLoaded] = useState(false);
     const navigate = useNavigate();
 
@@ -43,17 +45,36 @@ const CheckOut = (props: IProps) => {
     const handlePaymentSuccess = async (details: any, data: any) => {
         console.log("Payment details: ", details);
         if (details.status === "COMPLETED") {
-            const res = await callCreateJob(valueJob);
-            if (res.data) {
-                message.success("Tạo mới job thành công");
-                setOpenModal(false)
-                navigate('/hr/job')
-            } else {
-                notification.error({
-                    message: 'Có lỗi xảy ra',
-                    description: res.message
-                });
+            if (valueJob) {
+                const res = await callCreateJob(valueJob);
+                if (res.data) {
+                    message.success("Tạo mới job thành công");
+                    setOpenModal(false)
+                    navigate('/hr/job')
+                } else {
+                    notification.error({
+                        message: 'Có lỗi xảy ra',
+                        description: res.message
+                    });
+                }
             }
+            else if (valueJobUpdate) {
+                const res = await callUpdateJob(valueJobUpdate, idUpdate);
+                if (res.data) {
+                    message.success("Cập nhật job thành công");
+                    navigate('/hr/job')
+                } else {
+                    notification.error({
+                        message: 'Có lỗi xảy ra',
+                        description: res.message
+                    });
+                }
+            }
+        } else {
+            notification.error({
+                message: 'Có lỗi xảy ra',
+                description: "Thanh toán thất bại, vui lòng kiểm tra lại!"
+            });
         }
     };
 
@@ -71,20 +92,36 @@ const CheckOut = (props: IProps) => {
                         <FaCcPaypal style={{ fontSize: "200px" }} />
                     </Col>
 
-                    <Col span={24} md={12}>
-                        <Form.Item
-                            label="Tên Job"
-                        >
-                            <Input value={valueJob?.name} disabled />
-                        </Form.Item>
-                        <Form.Item
-                            label="Số tiền phải trả"
-                        >
-                            <Input value={`${valueJob?.paymentAmount} $`} disabled />
-                        </Form.Item>
-
-
-                    </Col>
+                    {
+                        valueJob &&
+                        <Col span={24} md={12}>
+                            <Form.Item
+                                label="Tên Job"
+                            >
+                                <Input value={valueJob?.name} disabled />
+                            </Form.Item>
+                            <Form.Item
+                                label="Số tiền phải trả"
+                            >
+                                <Input value={`${valueJob?.paymentAmount} $`} disabled />
+                            </Form.Item>
+                        </Col>
+                    }
+                    {
+                        valueJobUpdate &&
+                        <Col span={24} md={12}>
+                            <Form.Item
+                                label="Tên Job"
+                            >
+                                <Input value={valueJobUpdate?.name} disabled />
+                            </Form.Item>
+                            <Form.Item
+                                label="Số tiền phải trả"
+                            >
+                                <Input value={`${paymentAmountNew} $`} disabled />
+                            </Form.Item>
+                        </Col>
+                    }
                 </Row>
                 <Row>
                     {
