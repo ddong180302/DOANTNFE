@@ -18,7 +18,6 @@ const ClientJobDetailPage = (props: any) => {
     const [jobDetail, setJobDetail] = useState<IJob | null>(null);
     const [companyDetail, setCompanyDetail] = useState<ICompany | null>(null);
     const [isLoading, setIsLoading] = useState<boolean>(false);
-    const [firstId, setFirstId] = useState<string>();
     const [secondId, setSecondId] = useState<string>();
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
     const isAuthenticated = useAppSelector(state => state.account.isAuthenticated);
@@ -30,8 +29,8 @@ const ClientJobDetailPage = (props: any) => {
     const userId = user?._id;
     const userRole = user?.role?.name;
     const navigate = useNavigate();
-    console.log("user: ", user)
 
+    console.log("check detail userId: ", userId)
 
     useEffect(() => {
         const init = async () => {
@@ -39,7 +38,6 @@ const ClientJobDetailPage = (props: any) => {
                 const res = await callFetchJobById(id);
                 if (res?.data) {
                     setJobDetail(res.data);
-                    setFirstId(userId)
                 }
             }
         };
@@ -66,7 +64,6 @@ const ClientJobDetailPage = (props: any) => {
                 const resCom = await callFetchIdUser(idCom);
                 if (resCom?.data) {
                     setSecondId(resCom.data._id);
-                    //setFirstId(userId);
                 }
             }
         };
@@ -76,7 +73,7 @@ const ClientJobDetailPage = (props: any) => {
 
     const handleChat = async () => {
         if (isAuthenticated) {
-            navigate('/messages', { state: { firstId, secondId } });
+            navigate('/messages', { state: { userId, secondId } });
         } else {
             navigate('/login');
         }

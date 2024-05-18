@@ -25,7 +25,6 @@ const UserPage = () => {
     const meta = useAppSelector(state => state.user.meta);
     const users = useAppSelector(state => state.user.result);
     const dispatch = useAppDispatch();
-    console.log("check data user: ", users)
 
     const handleDeleteUser = async (_id: string | undefined) => {
         if (_id) {

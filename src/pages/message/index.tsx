@@ -1,4 +1,4 @@
-import { Avatar, Button, Col, Divider, Input, List, Row, Typography } from 'antd';
+import { Row } from 'antd';
 import styles from 'styles/client.module.scss';
 import { useLocation } from 'react-router-dom';
 import { useEffect, useRef, useState } from 'react';
@@ -10,9 +10,17 @@ import ListMessage from '@/components/message/listMessage';
 import ListChat from '@/components/message/listChat';
 
 type Notification = {
-    senderId: string; // Đây có thể là kiểu dữ liệu thích hợp cho ID của người gửi
+    senderId: string;
     isRead: boolean;
     date: Date;
+};
+
+type Message = {
+    id: string;
+    sender: string;
+    message: string;
+    updatedAt: string;
+    chatId: string;
 };
 
 type MySocketEvents = {
@@ -20,18 +28,20 @@ type MySocketEvents = {
     connect: () => void;
     disconnect: () => void;
     getOnlineUsers: (users: any[]) => void;
-    receiveMessage: (message: any) => void;
-    sendMessage: (message: any) => void;
+    receiveMessage: (message: Message) => void;
+    sendMessage: (message: Message) => void;
     getNotification: (notification: Notification) => void;
 };
 
 const MessagePage = (props: any) => {
     const location = useLocation();
-    const [isLoading, setIsLoading] = useState<boolean>(false);
-    const [listChat, setListChat] = useState<IChat[] | null>(null);
     const { state } = location;
-    const [currentChat, setCurrentChat] = useState('');
-    const [messageList, setMessageList] = useState<any[]>([]);
+    const firstId = state?.userId;
+    const secondId = state?.secondId;
+
+    const [listChat, setListChat] = useState<IChat[] | null>(null);
+    const [currentChat, setCurrentChat] = useState<string>('');
+    const [messageList, setMessageList] = useState<Message[]>([]);
     const [inputMessage, setInputMessage] = useState<string>('');
     const user = useAppSelector(state => state.account.user);
     const userId = user?._id;
@@ -40,29 +50,21 @@ const MessagePage = (props: any) => {
     const [socket, setSocket] = useState<Socket<MySocketEvents> | null>(null);
     const [onlineUsers, setOnlineUsers] = useState<any[]>([]);
     const socketRef = useRef<Socket | null>(null);
-
-    const firstId = state?.firstId;
-    const secondId = state?.secondId;
-    const idUser = state?.userId;
+    const [notifications, setNotifications] = useState<{ [key: string]: number }>({});
 
     useEffect(() => {
-        // Kết nối với server thông qua socket.io-client
         const newSocket = io("http://localhost:4000");
         socketRef.current = newSocket;
         setSocket(newSocket);
 
-        // Gửi sự kiện connectUser khi người dùng kết nối
         newSocket.emit("connectUser", userId);
 
-        // Lắng nghe sự kiện updateOnlineUsers để cập nhật danh sách người dùng đang online
         newSocket.on("updateOnlineUsers", (users) => {
             setOnlineUsers(users);
         });
 
-
         return () => {
             if (socketRef.current) {
-                // Gửi sự kiện disconnectUser khi người dùng ngắt kết nối hoặc đóng tab
                 socketRef.current.emit("disconnectUser", userId);
                 socketRef.current.disconnect();
             }
@@ -71,33 +73,33 @@ const MessagePage = (props: any) => {
 
     useEffect(() => {
         const init = async () => {
-            setIsLoading(true);
             if (firstId && secondId) {
                 const res = await callCreateChat({ firstId, secondId });
                 if (res?.data instanceof Array && res.data.length > 0) {
-                    setListChat([res.data]);
-                    setSelectedChatId(res.data[0]._id);
-                    setCurrentChat(res.data[0]._id);
-                    setSelectedChatName(res.data[0].secondName)
+                    const existingChat = res.data.find(chat => chat.firstId === firstId && chat.secondId === secondId);
+                    if (existingChat) {
+                        setListChat([res.data]);
+                        setSelectedChatId(existingChat._id);
+                        setCurrentChat(existingChat._id);
+                        setSelectedChatName(existingChat.secondName);
+                    }
                 }
-            } else if (idUser) {
-                const res = await callFetchChatById(idUser);
-
+            } else if (userId) {
+                const res = await callFetchChatById(userId);
                 if (res?.data instanceof Array && res.data.length > 0) {
-                    setListChat([res.data]);
+                    setListChat(res.data);
                 }
             }
-            setIsLoading(false);
         };
         init();
-    }, [firstId, secondId, idUser]);
+    }, [firstId, secondId, userId]);
 
     useEffect(() => {
         const fetchMessages = async () => {
             if (firstId && secondId) {
                 try {
                     const message = await callMessByFirstSecondId(firstId, secondId);
-                    const newMessages = message?.data instanceof Array ? message.data.map((item, index) => ({
+                    const newMessages = message?.data instanceof Array ? message.data.map((item) => ({
                         id: item._id,
                         sender: item.senderId,
                         message: item.text,
@@ -105,11 +107,6 @@ const MessagePage = (props: any) => {
                         chatId: item.chatId
                     })) : [];
                     setMessageList(newMessages);
-
-                    if (message?.data instanceof Array && message.data.length > 0) {
-                        setSelectedChatId(message.data[0].chatId);
-                        setCurrentChat(message.data[0].chatId);
-                    }
                 } catch (error) {
                     console.error('Error fetching messages:', error);
                 }
@@ -118,7 +115,6 @@ const MessagePage = (props: any) => {
         fetchMessages();
     }, [firstId, secondId]);
 
-
     const handleChatClick = async (id: string, name: string) => {
         setCurrentChat(id);
         setSelectedChatId(id);
@@ -126,7 +122,7 @@ const MessagePage = (props: any) => {
 
         try {
             const message = await callFetchMessageByChatId(id);
-            const newMessages = message?.data instanceof Array ? message.data.map((item, index) => ({
+            const newMessages = message?.data instanceof Array ? message.data.map((item) => ({
                 id: item._id,
                 sender: item.senderId,
                 message: item.text,
@@ -135,9 +131,12 @@ const MessagePage = (props: any) => {
                 name: name
             })) : [];
             setMessageList(newMessages);
-            if (!newMessages.length) {
-                // Xử lý khi không có tin nhắn nào trong danh sách
-            }
+            // Reset notifications for the selected chat
+            setNotifications((prevNotifications) => ({
+                ...prevNotifications,
+                [id]: 0,
+            }));
+
         } catch (error) {
             console.error('Error fetching messages:', error);
         }
@@ -152,14 +151,12 @@ const MessagePage = (props: any) => {
                 text: inputMessage
             });
             if (res && res?.data) {
-                // setCurrentChat(res?.data?.chatId || "");
-                //setSelectedChatId(res.data.chatId || "");
-                const newMessage = {
-                    id: res.data._id,
-                    sender: res.data.senderId,
-                    message: res.data.text,
-                    updatedAt: res.data.updatedAt,
-                    chatId: res.data.chatId
+                const newMessage: Message = {
+                    id: res.data._id || "",
+                    sender: res.data.senderId || "",
+                    message: res.data.text || "",
+                    updatedAt: res.data.updatedAt || "",
+                    chatId: res.data.chatId || ""
                 };
                 setInputMessage('');
                 if (socketRef.current) {
@@ -171,29 +168,44 @@ const MessagePage = (props: any) => {
         }
     };
 
+    // useEffect(() => {
+    //     if (socket) {
+    //         const handleReceiveMessage = (message: Message) => {
+    //             console.log("Received message: ", message);
+    //             if (message.chatId === selectedChatId) {
+    //                 setMessageList((prevMessages) => [...prevMessages, message]);
+    //             }
+    //         };
+
+    //         socket.on("receiveMessage", handleReceiveMessage);
+
+    //         return () => {
+    //             socket.off("receiveMessage", handleReceiveMessage);
+    //         };
+    //     }
+    // }, [socket, selectedChatId]);
+
     useEffect(() => {
         if (socket) {
-            socket.on("receiveMessage", (message) => {
+            const handleReceiveMessage = (message: Message) => {
+                console.log("Received message: ", message);
                 if (message.chatId === selectedChatId) {
-                    setSelectedChatId(message.chatId);
-                    const newMessages = {
-                        id: message.id,
-                        sender: message.sender,
-                        message: message.message,
-                        updatedAt: message.updatedAt,
-                        chatId: message.chatId
-                    };
-                    const updatedMessages = [...messageList, newMessages];
-                    setMessageList(updatedMessages);
+                    setMessageList((prevMessages) => [...prevMessages, message]);
                 } else {
-                    return
+                    setNotifications((prevNotifications) => ({
+                        ...prevNotifications,
+                        [message.chatId]: (prevNotifications[message.chatId] || 0) + 1,
+                    }));
                 }
-            });
+            };
+
+            socket.on("receiveMessage", handleReceiveMessage);
+
+            return () => {
+                socket.off("receiveMessage", handleReceiveMessage);
+            };
         }
-    }, [socket, messageList, selectedChatId]);
-
-
-
+    }, [socket, selectedChatId]);
 
     return (
         <div className={`${styles.container} ${styles['message-section']}`}>
@@ -203,6 +215,7 @@ const MessagePage = (props: any) => {
                     selectedChatId={selectedChatId}
                     handleChatClick={handleChatClick}
                     onlineUsers={onlineUsers}
+                    notifications={notifications}
                 />
                 <ListMessage
                     selectedChatId={selectedChatId}
@@ -215,8 +228,6 @@ const MessagePage = (props: any) => {
             </Row>
         </div>
     )
-
-
 }
 
 export default MessagePage;
