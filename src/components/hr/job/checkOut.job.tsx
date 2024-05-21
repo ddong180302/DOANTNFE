@@ -43,7 +43,6 @@ const CheckOut = (props: IProps) => {
     }, [])
 
     const handlePaymentSuccess = async (details: any, data: any) => {
-        console.log("Payment details: ", details);
         if (details.status === "COMPLETED") {
             if (valueJob) {
                 const res = await callCreateJob(valueJob);

@@ -218,3 +218,21 @@ export interface ISubscribers {
     createdAt?: string;
     updatedAt?: string;
 }
+
+export interface INotification {
+    userId: string;
+    chatId: string;
+    count: number;
+    lastMessage: string;
+}
+
+export interface IResetNotification {
+    userId: string;
+    chatId: string;
+}
+
+export interface IBackendRes<T> {
+    data: T;
+    message: string;
+    status: number;
+}

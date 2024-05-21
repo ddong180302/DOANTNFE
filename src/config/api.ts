@@ -1,4 +1,4 @@
-import { IBackendRes, ICompany, IAccount, IUser, IModelPaginate, IGetAccount, IJob, IResume, IPermission, IRole, ISubscribers, ISkill, IChat, IMessage, IListChat } from '@/types/backend';
+import { IBackendRes, ICompany, IAccount, IUser, IModelPaginate, IGetAccount, IJob, IResume, IPermission, IRole, ISubscribers, ISkill, IChat, IMessage, IListChat, INotification, IResetNotification } from '@/types/backend';
 import axios from 'config/axios-customize';
 
 /**
@@ -405,4 +405,21 @@ export const callFetchMessageByChatId = (chatId: string) => {
 
 export const callMessByFirstSecondId = (firstId: string, secondId: string) => {
     return axios.get<IBackendRes<IMessage>>(`/api/v1/messages/${firstId}/${secondId}`);
+}
+
+
+/**
+ * 
+Module Notification
+ */
+export const callFetchNotifications = (userId: string) => {
+    return axios.get<IBackendRes<INotification[]>>(`/api/v1/notifications/${userId}`);
+}
+
+export const callCreateOrUpdateNotification = (notification: INotification) => {
+    return axios.post<IBackendRes<INotification>>('/api/v1/notifications', { ...notification });
+}
+
+export const callResetNotification = (resetNotification: IResetNotification) => {
+    return axios.post<IBackendRes<INotification>>('/api/v1/notifications/reset', { ...resetNotification });
 }

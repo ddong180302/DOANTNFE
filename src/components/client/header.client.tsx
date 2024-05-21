@@ -1,17 +1,15 @@
 import { useState, useEffect } from 'react';
 import { CodeOutlined, ContactsOutlined, DashOutlined, LogoutOutlined, MenuFoldOutlined, RiseOutlined, TwitterOutlined } from '@ant-design/icons';
-import { Avatar, Drawer, Dropdown, MenuProps, Space, message } from 'antd';
+import { Avatar, Button, Drawer, Dropdown, MenuProps, Space, message } from 'antd';
 import { Menu, ConfigProvider } from 'antd';
 import styles from '@/styles/client.module.scss';
 import { isMobile } from 'react-device-detect';
-import { FaReact } from 'react-icons/fa';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 import { callLogout } from '@/config/api';
 import { setLogoutAction } from '@/redux/slice/accountSlide';
 import ManageAccount from './modal/manage.account';
-import logo from '../../../public/logo/logo.jpg';
 
 const Header = (props: any) => {
     const navigate = useNavigate();
@@ -26,7 +24,7 @@ const Header = (props: any) => {
     const location = useLocation();
 
     const [openMangeAccount, setOpenManageAccount] = useState<boolean>(false);
-
+    const userId = user?._id;
     useEffect(() => {
         setCurrent(location.pathname);
     }, [location])
@@ -139,7 +137,15 @@ const Header = (props: any) => {
     ];
 
     const itemsMobiles = [...items, ...itemsDropdown];
-
+    const handleChat = () => {
+        if (isAuthenticated) {
+            // Nếu đã đăng nhập, chuyển hướng người dùng đến trang tin nhắn và truyền tham số firstId và secondId
+            navigate('/messages', { state: { userId } });
+        } else {
+            // Nếu chưa đăng nhập, đưa người dùng đến trang đăng nhập
+            navigate('/login');
+        }
+    };
     return (
         <>
             <div className={styles["header-section"]}>
@@ -178,6 +184,7 @@ const Header = (props: any) => {
                                         (
                                             userRole === "USER" ?
                                                 <div className={styles["manage"]}>
+                                                    <Button className={styles["chat"]} onClick={() => handleChat()}>Chat ngay</Button>
                                                     <div className={styles["link"]}>
                                                         <Link to={'/contact'} className={styles["link"]}>Nhà Tuyển Dụng</Link>
                                                     </div>

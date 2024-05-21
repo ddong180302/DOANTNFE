@@ -2,7 +2,16 @@ import { Row } from 'antd';
 import styles from 'styles/client.module.scss';
 import { useLocation } from 'react-router-dom';
 import { useEffect, useRef, useState } from 'react';
-import { callCreateChat, callFetchMessageByChatId, callCreateMessage, callFetchChatById, callMessByFirstSecondId } from '@/config/api';
+import {
+    callCreateChat,
+    callFetchMessageByChatId,
+    callCreateMessage,
+    callFetchChatById,
+    callMessByFirstSecondId,
+    callFetchNotifications,
+    callResetNotification,
+    callCreateOrUpdateNotification
+} from '@/config/api';
 import { IChat } from '@/types/backend';
 import { useAppSelector } from '@/redux/hooks';
 import { io, Socket } from "socket.io-client";
@@ -50,6 +59,7 @@ const MessagePage = (props: any) => {
     const [socket, setSocket] = useState<Socket<MySocketEvents> | null>(null);
     const [onlineUsers, setOnlineUsers] = useState<any[]>([]);
     const socketRef = useRef<Socket | null>(null);
+    const [latestMessages, setLatestMessages] = useState<{ [key: string]: Message }>({});
     const [notifications, setNotifications] = useState<{ [key: string]: number }>({});
 
     useEffect(() => {
@@ -82,12 +92,59 @@ const MessagePage = (props: any) => {
                         setSelectedChatId(existingChat._id);
                         setCurrentChat(existingChat._id);
                         setSelectedChatName(existingChat.secondName);
+
+                        // Fetch latest messages for each chat
+                        const latestMessages = await Promise.all(
+                            res.data.map(async (chat) => {
+                                const messageRes = await callFetchMessageByChatId(chat._id);
+                                if (messageRes?.data instanceof Array && messageRes.data.length > 0) {
+                                    const latestMessage = messageRes.data[messageRes.data.length - 1];
+                                    return {
+                                        [chat._id]: {
+                                            id: latestMessage._id,
+                                            sender: latestMessage.senderId,
+                                            message: latestMessage.text,
+                                            updatedAt: latestMessage.updatedAt,
+                                            chatId: chat._id
+                                        }
+                                    };
+                                }
+                                return {};
+                            })
+                        );
+
+                        // Merge all latest messages into one object
+                        const mergedLatestMessages = latestMessages.reduce((acc, curr) => ({ ...acc, ...curr }), {});
+                        setLatestMessages(mergedLatestMessages);
                     }
                 }
             } else if (userId) {
                 const res = await callFetchChatById(userId);
                 if (res?.data instanceof Array && res.data.length > 0) {
                     setListChat(res.data);
+                    // Fetch latest messages for each chat
+                    const latestMessages = await Promise.all(
+                        res.data.map(async (chat) => {
+                            const messageRes = await callFetchMessageByChatId(chat._id);
+                            if (messageRes?.data instanceof Array && messageRes.data.length > 0) {
+                                const latestMessage = messageRes.data[messageRes.data.length - 1];
+                                return {
+                                    [chat._id]: {
+                                        id: latestMessage._id,
+                                        sender: latestMessage.senderId,
+                                        message: latestMessage.text,
+                                        updatedAt: latestMessage.updatedAt,
+                                        chatId: chat._id
+                                    }
+                                };
+                            }
+                            return {};
+                        })
+                    );
+
+                    // Merge all latest messages into one object
+                    const mergedLatestMessages = latestMessages.reduce((acc, curr) => ({ ...acc, ...curr }), {});
+                    setLatestMessages(mergedLatestMessages);
                 }
             }
         };
@@ -107,6 +164,10 @@ const MessagePage = (props: any) => {
                         chatId: item.chatId
                     })) : [];
                     setMessageList(newMessages);
+                    if (newMessages.length > 0) {
+                        const latestMessage = newMessages[newMessages.length - 1];
+                        setLatestMessages(prev => ({ ...prev, [latestMessage.chatId]: latestMessage }));
+                    }
                 } catch (error) {
                     console.error('Error fetching messages:', error);
                 }
@@ -114,6 +175,26 @@ const MessagePage = (props: any) => {
         };
         fetchMessages();
     }, [firstId, secondId]);
+
+    useEffect(() => {
+        const fetchNotifications = async () => {
+            try {
+                const res = await callFetchNotifications(userId);
+                if (res?.data) {
+                    const notificationData = res.data.reduce<{ [key: string]: number }>((acc, notification) => {
+                        acc[notification.chatId] = notification.count;
+                        return acc;
+                    }, {});
+                    setNotifications(notificationData);
+                }
+            } catch (error) {
+                console.error('Error fetching notifications:', error);
+            }
+        };
+        if (userId) {
+            fetchNotifications();
+        }
+    }, [userId]);
 
     const handleChatClick = async (id: string, name: string) => {
         setCurrentChat(id);
@@ -131,11 +212,24 @@ const MessagePage = (props: any) => {
                 name: name
             })) : [];
             setMessageList(newMessages);
+
             // Reset notifications for the selected chat
-            setNotifications((prevNotifications) => ({
-                ...prevNotifications,
-                [id]: 0,
-            }));
+            setNotifications((prevNotifications) => {
+                const updatedNotifications = {
+                    ...prevNotifications,
+                    [id]: 0,
+                };
+
+                // Gọi API để reset thông báo
+                callResetNotification({ userId, chatId: id });
+
+                return updatedNotifications;
+            });
+
+            if (newMessages.length > 0) {
+                const latestMessage = newMessages[newMessages.length - 1];
+                setLatestMessages(prev => ({ ...prev, [latestMessage.chatId]: latestMessage }));
+            }
 
         } catch (error) {
             console.error('Error fetching messages:', error);
@@ -168,35 +262,32 @@ const MessagePage = (props: any) => {
         }
     };
 
-    // useEffect(() => {
-    //     if (socket) {
-    //         const handleReceiveMessage = (message: Message) => {
-    //             console.log("Received message: ", message);
-    //             if (message.chatId === selectedChatId) {
-    //                 setMessageList((prevMessages) => [...prevMessages, message]);
-    //             }
-    //         };
-
-    //         socket.on("receiveMessage", handleReceiveMessage);
-
-    //         return () => {
-    //             socket.off("receiveMessage", handleReceiveMessage);
-    //         };
-    //     }
-    // }, [socket, selectedChatId]);
-
     useEffect(() => {
         if (socket) {
             const handleReceiveMessage = (message: Message) => {
-                console.log("Received message: ", message);
                 if (message.chatId === selectedChatId) {
                     setMessageList((prevMessages) => [...prevMessages, message]);
                 } else {
-                    setNotifications((prevNotifications) => ({
-                        ...prevNotifications,
-                        [message.chatId]: (prevNotifications[message.chatId] || 0) + 1,
-                    }));
+                    setNotifications((prevNotifications) => {
+                        const updatedNotifications = {
+                            ...prevNotifications,
+                            [message.chatId]: (prevNotifications[message.chatId] || 0) + 1,
+                        };
+                        // Gọi API để cập nhật thông báo
+                        callCreateOrUpdateNotification({
+                            userId,
+                            chatId: message.chatId,
+                            count: updatedNotifications[message.chatId],
+                            lastMessage: message.message
+                        });
+
+                        return updatedNotifications;
+                    });
                 }
+                setLatestMessages((prevLatestMessages) => ({
+                    ...prevLatestMessages,
+                    [message.chatId]: message,
+                }));
             };
 
             socket.on("receiveMessage", handleReceiveMessage);
@@ -216,6 +307,7 @@ const MessagePage = (props: any) => {
                     handleChatClick={handleChatClick}
                     onlineUsers={onlineUsers}
                     notifications={notifications}
+                    latestMessages={latestMessages}
                 />
                 <ListMessage
                     selectedChatId={selectedChatId}

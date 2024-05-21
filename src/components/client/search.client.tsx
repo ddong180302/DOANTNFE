@@ -1,12 +1,11 @@
 import { Button, Card, Col, Empty, Form, Pagination, Row, Select, Spin } from 'antd';
 import { EnvironmentOutlined, MonitorOutlined, ThunderboltOutlined } from '@ant-design/icons';
-import { LOCATION_LIST, SKILLS_LIST, convertSlug, getLocationName } from '@/config/utils';
+import { LOCATION_LIST, convertSlug, getLocationName } from '@/config/utils';
 import { ProForm } from '@ant-design/pro-components';
 import { useEffect, useState } from 'react';
-import CompanyCard from './card/company.card';
 import { IJob } from '@/types/backend';
 import { useNavigate } from 'react-router-dom';
-import { callFetchJob } from '@/config/api';
+import { callFetchJob, callFetchSkill } from '@/config/api';
 import { isMobile } from 'react-device-detect';
 import styles from 'styles/client.module.scss';
 import dayjs from 'dayjs';
@@ -18,10 +17,15 @@ interface IProps {
     showPagination?: boolean;
 }
 
+export interface ISkillSelect {
+    label: string;
+    value: string;
+    key?: string;
+}
+
 const SearchClient = (props: IProps) => {
     const { showPagination = false } = props;
 
-    const optionsSkills = SKILLS_LIST;
     const optionsLocations = LOCATION_LIST;
     const [form] = Form.useForm();
 
@@ -29,11 +33,17 @@ const SearchClient = (props: IProps) => {
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
     const [current, setCurrent] = useState(1);
+    const [currentSkills, setCurrentSkills] = useState(1);
     const [pageSize, setPageSize] = useState(8);
+    const [pageSizeSkills, setPageSizeSkills] = useState(1000);
     const [total, setTotal] = useState(0);
     const [filter, setFilter] = useState("");
     const [sortQuery, setSortQuery] = useState("sort=-updatedAt");
     const navigate = useNavigate();
+
+    const [skills, setSkills] = useState<Array<{ label: string; value: string; }>>([]);
+    const [loading, setLoading] = useState<boolean>(true);
+    const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
         fetchJob();
@@ -42,6 +52,7 @@ const SearchClient = (props: IProps) => {
     const fetchJob = async () => {
         setIsLoading(true)
         let query = `current=${current}&pageSize=${pageSize}`;
+        console.log("check filter: ", filter)
         if (filter) {
             query += `&${filter}`;
         }
@@ -49,6 +60,7 @@ const SearchClient = (props: IProps) => {
             query += `&${sortQuery}`;
         }
 
+        console.log("check query: ", query)
         const res = await callFetchJob(query);
         if (res && res.data) {
             setDisplayJob(res.data.result);
@@ -56,6 +68,38 @@ const SearchClient = (props: IProps) => {
         }
         setIsLoading(false)
     }
+
+
+    useEffect(() => {
+        const fetchSkills = async () => {
+            try {
+
+                setIsLoading(true)
+                let query = `current=${currentSkills}&pageSize=${pageSizeSkills}`;
+
+                const res = await callFetchSkill(query);
+                if (res && res.data) {
+
+                    const transformedSkills = res?.data?.result.map(skill => ({
+                        label: skill.name, // Assuming 'name' is the skill name
+                        value: skill.name, // Remove spaces and convert to uppercase
+                    }));
+
+                    setSkills(transformedSkills);
+                    //setTotal(res.data.meta.total);
+                }
+                setIsLoading(false)
+
+            } catch (err) {
+                setError('Failed to fetch skills');
+                console.error(err);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchSkills();
+    }, []);
 
     const handleOnchangePage = (pagination: { current: number, pageSize: number }) => {
         if (pagination && pagination.current !== current) {
@@ -74,6 +118,8 @@ const SearchClient = (props: IProps) => {
 
     const onFinish = async (values: any) => {
         const { skills, location } = values;
+
+        console.log("check values: ", values)
 
         // Xử lý filter cho kỹ năng
         const skillsFilter = skills && skills.length > 0 ? `skills=${skills.join(',')}` : '';
@@ -180,7 +226,7 @@ const SearchClient = (props: IProps) => {
                                 </>
                             }
                             optionLabelProp="label"
-                            options={optionsSkills}
+                            options={skills}
                             popupMatchSelectWidth
                         />
                     </ProForm.Item>

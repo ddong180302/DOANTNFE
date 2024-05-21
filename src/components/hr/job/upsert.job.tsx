@@ -2,7 +2,7 @@ import { Breadcrumb, Col, ConfigProvider, Divider, Form, Input, Modal, Radio, Ro
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { FooterToolbar, ProForm, ProFormDigit, ProFormSelect, ProFormSwitch, ProFormText } from "@ant-design/pro-components";
 import styles from 'styles/admin.module.scss';
-import { LOCATION_LIST, SKILLS_LIST } from "@/config/utils";
+import { LOCATION_LIST } from "@/config/utils";
 import { useState, useEffect } from 'react';
 import { callCreateJob, callFetchCompany, callFetchJobById, callFetchSkill, callGetCompanyByUser, callUpdateJob } from "@/config/api";
 import ReactQuill from 'react-quill';
@@ -175,21 +175,10 @@ const ViewUpsertJobHr = (props: any) => {
                 setIdUpdate(dataUpdate._id);
                 setValueJobUpdate(job)
                 setOpenModal(true)
-                // const res = await callUpdateJob(job, dataUpdate._id);
-                // if (res.data) {
-                //     message.success("Cập nhật job thành công");
-                //     navigate('/hr/job')
-                // } else {
-                //     notification.error({
-                //         message: 'Có lỗi xảy ra',
-                //         description: res.message
-                //     });
-                // }
             }
 
         } else {
             //create
-
             const valuesSkill = values.skills.map((item: any) => item.label);
             const job = {
                 name: values.name,

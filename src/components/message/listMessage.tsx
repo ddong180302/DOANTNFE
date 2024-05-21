@@ -50,17 +50,6 @@ const ListMessage = (props: IProps) => {
         }
     };
 
-    const handleEditMessage = (id: string) => {
-        // Xử lý khi người dùng chọn sửa tin nhắn
-    };
-
-    const handleDeleteMessage = (id: string) => {
-        // Xử lý khi người dùng chọn xóa tin nhắn
-        alert(id)
-    };
-
-
-    //const endOfMessages = <div ref={endOfMessagesRef} />;
     return (
         <>
             <Col span={24} md={16} className={styles["listmess"]}>
@@ -86,41 +75,8 @@ const ListMessage = (props: IProps) => {
                                 </div>
 
                             </div>
-                            <div style={{ display: "flex", flexDirection: "column", padding: "0 0 0 20px", alignItems: "center", justifyContent: "center", gap: "6px" }}>
-                                <EditOutlined
-                                    style={{
-                                        fontSize: 14,
-                                        color: '#ffa500',
-                                        cursor: "pointer"
-                                    }}
-                                    type=""
-                                    onClick={() => {
-                                        handleEditMessage(message.id)
-                                    }}
-                                />
-
-                                <Popconfirm
-                                    placement="leftTop"
-                                    title={"Xác nhận xóa tin nhắn"}
-                                    description={"Bạn có chắc chắn muốn xóa tin nhắn này ?"}
-                                    onConfirm={() => handleDeleteMessage(message.id)}
-                                    okText="Xác nhận"
-                                    cancelText="Hủy"
-                                >
-                                    <span style={{ cursor: "pointer", margin: "0 10px" }}>
-                                        <DeleteOutlined
-                                            style={{
-                                                fontSize: 14,
-                                                color: '#ff4d4f',
-                                                cursor: "pointer"
-                                            }}
-                                        />
-                                    </span>
-                                </Popconfirm>
-                            </div>
                         </div>
                     ))}
-                    {/* // {endOfMessages} */}
                 </div>
                 <div className={styles['input-section']}>
                     <Input

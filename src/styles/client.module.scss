@@ -113,9 +113,16 @@
                 display: flex;
                 justify-content: center;
                 align-items: center;
+                gap: 20px;
 
-                .link {
-                    margin-right: 20px;
+                .chat {
+                    background: #1677ff;
+                    color: #000 !important;
+
+                }
+
+                Button {
+                    color: #000 !important;
                 }
             }
 

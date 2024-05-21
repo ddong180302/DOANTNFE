@@ -3,11 +3,10 @@ import { isMobile } from "react-device-detect";
 import type { TabsProps } from 'antd';
 import { IResume, IUser } from "@/types/backend";
 import { useState, useEffect } from 'react';
-import { callFetchResumeByUser, callGetInforByUser, callGetSubscriberSkills, callResetPass, callUpdateInforByUser, callUpdateSubscriber } from "@/config/api";
+import { callFetchResumeByUser, callFetchSkill, callGetInforByUser, callGetSubscriberSkills, callResetPass, callUpdateInforByUser, callUpdateSubscriber } from "@/config/api";
 import type { ColumnsType } from 'antd/es/table';
 import dayjs from 'dayjs';
 import { MonitorOutlined } from "@ant-design/icons";
-import { SKILLS_LIST } from "@/config/utils";
 import { useAppSelector } from "@/redux/hooks";
 import { ProFormDigit, ProFormSelect, ProFormText } from "@ant-design/pro-components";
 import { useNavigate } from "react-router-dom";
@@ -324,7 +323,12 @@ const UserResetPassword = (props: any) => {
 const JobByEmail = (props: any) => {
     const [form] = Form.useForm();
     const user = useAppSelector(state => state.account.user);
-
+    const [skills, setSkills] = useState<Array<{ label: string; value: string; }>>([]);
+    const [loading, setLoading] = useState<boolean>(true);
+    const [error, setError] = useState<string | null>(null);
+    const [currentSkills, setCurrentSkills] = useState(1);
+    const [pageSizeSkills, setPageSizeSkills] = useState(1000);
+    const [isLoading, setIsLoading] = useState<boolean>(false);
     useEffect(() => {
         const init = async () => {
             const res = await callGetSubscriberSkills();
@@ -334,6 +338,38 @@ const JobByEmail = (props: any) => {
         }
         init();
     }, [])
+
+    useEffect(() => {
+        const fetchSkills = async () => {
+            try {
+
+                setIsLoading(true)
+                let query = `current=${currentSkills}&pageSize=${pageSizeSkills}`;
+
+                const res = await callFetchSkill(query);
+                if (res && res.data) {
+
+                    const transformedSkills = res?.data?.result.map(skill => ({
+                        label: skill.name, // Assuming 'name' is the skill name
+                        value: skill.name, // Remove spaces and convert to uppercase
+                    }));
+
+                    setSkills(transformedSkills);
+                    //setTotal(res.data.meta.total);
+                }
+                setIsLoading(false)
+
+            } catch (err) {
+                setError('Failed to fetch skills');
+                console.error(err);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchSkills();
+    }, []);
+
 
     const onFinish = async (values: any) => {
         const { skills } = values;
@@ -378,7 +414,7 @@ const JobByEmail = (props: any) => {
                                     </>
                                 }
                                 optionLabelProp="label"
-                                options={SKILLS_LIST}
+                                options={skills}
                                 popupMatchSelectWidth
                             />
                         </Form.Item>
