@@ -33,19 +33,15 @@ const ListMessage = (props: IProps) => {
     }, [messageList]);
 
     const formatMessageTime = (timestamp: Date) => {
-        const messageTime = moment(timestamp); // Tạo đối tượng moment từ timestamp
-        const today = moment().startOf('day'); // Bắt đầu của ngày hôm nay
-        const yesterday = moment().subtract(1, 'days').startOf('day'); // Bắt đầu của ngày hôm qua
+        const messageTime = moment(timestamp);
+        const today = moment().startOf('day');
+        const yesterday = moment().subtract(1, 'days').startOf('day');
 
-        // So sánh ngày để xác định xem tin nhắn được gửi trong ngày nào
         if (messageTime.isSame(today, 'day')) {
-            // Tin nhắn được gửi trong ngày hôm nay
             return `Hôm nay lúc ${messageTime.format('HH:mm')}`;
         } else if (messageTime.isSame(yesterday, 'day')) {
-            // Tin nhắn được gửi trong ngày hôm qua
             return `Hôm qua lúc ${messageTime.format('HH:mm')}`;
         } else {
-            // Tin nhắn được gửi trước đó
             return `Ngày ${messageTime.format('DD/MM/YYYY')} lúc ${messageTime.format('HH:mm')}`;
         }
     };

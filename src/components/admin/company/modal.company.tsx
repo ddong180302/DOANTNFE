@@ -12,6 +12,7 @@ import { v4 as uuidv4 } from 'uuid';
 import enUS from 'antd/lib/locale/en_US';
 import countryList, { Country } from 'country-list';
 import { DebounceSelect } from "../user/debouce.select";
+import { LOCATION_LIST } from "@/config/utils";
 
 interface IProps {
     openModal: boolean;
@@ -110,9 +111,16 @@ const ModalCompany = (props: IProps) => {
 
                 form.setFieldsValue({
                     ...dataInit,
-
                     skills: formattedSkills // Đặt giá trị cho trường skills
                 });
+
+                // Set the logo data
+                if (dataInit?.logo) {
+                    setDataLogo([{
+                        name: dataInit.logo,
+                        uid: uuidv4()
+                    }]);
+                }
             }
         }
 
@@ -127,7 +135,6 @@ const ModalCompany = (props: IProps) => {
             companySize, workingDays,
             overtimePolicy, ourkeyskills
         } = valuesForm;
-        //const valuesSkill = ourkeyskills.map((item: any) => item.label);
         const valuesSkill = ourkeyskills.map((item: any) => {
             if (item && item?.label) {
                 return item.label;
@@ -344,14 +351,12 @@ const ModalCompany = (props: IProps) => {
                             </Col>
 
                             <Col span={16}>
-                                <ProFormTextArea
-                                    label="Địa chỉ"
+                                <ProFormSelect
                                     name="address"
-                                    rules={[{ required: true, message: 'Vui lòng không bỏ trống' }]}
-                                    placeholder="Nhập địa chỉ công ty"
-                                    fieldProps={{
-                                        autoSize: { minRows: 4 }
-                                    }}
+                                    label="Địa điểm"
+                                    options={LOCATION_LIST.filter(item => item.value !== 'ALL')}
+                                    placeholder="Please select a location"
+                                    rules={[{ required: true, message: 'Vui lòng chọn địa điểm!' }]}
                                 />
                             </Col>
                             <Col span={8}>

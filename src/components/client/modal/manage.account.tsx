@@ -128,7 +128,6 @@ const UserUpdateInfo = (props: any) => {
 
     const onFinish = async (values: any) => {
         const { email, name, age, gender, address, phone } = values;
-        console.log("value: ", values);
         const res = await callUpdateInforByUser({
             _id: user._id,
             email: email,
@@ -281,15 +280,24 @@ const UserResetPassword = (props: any) => {
                         <div style={{ marginBottom: "10px" }}>{passwordMatchError}</div>
                     </Form.Item>
                 )}
+
                 <Form.Item
-                    labelCol={{ span: 24 }}
-                    label="Mật khẩu Mới"
+                    labelCol={{ span: 24 }} //whole column
+                    label="Mật khẩu"
                     name="password"
-                    rules={[{ required: true, message: 'Mật khẩu không được để trống!' }]}
+                    rules={[
+                        {
+                            required: true, message: 'Mật khẩu không được để trống!'
+                        },
+                        {
+                            min: 6,
+                            max: 12,
+                            message: 'Mật khẩu phải có từ 6 đến 12 ký tự!'
+                        }
+                    ]}
                 >
                     <Input.Password />
                 </Form.Item>
-
                 <Form.Item
                     labelCol={{ span: 24 }}
                     label="Xác Nhận Mật khẩu Mới"
@@ -342,7 +350,6 @@ const JobByEmail = (props: any) => {
     useEffect(() => {
         const fetchSkills = async () => {
             try {
-
                 setIsLoading(true)
                 let query = `current=${currentSkills}&pageSize=${pageSizeSkills}`;
 
@@ -350,8 +357,8 @@ const JobByEmail = (props: any) => {
                 if (res && res.data) {
 
                     const transformedSkills = res?.data?.result.map(skill => ({
-                        label: skill.name, // Assuming 'name' is the skill name
-                        value: skill.name, // Remove spaces and convert to uppercase
+                        label: skill.name,
+                        value: skill.name,
                     }));
 
                     setSkills(transformedSkills);
@@ -400,8 +407,7 @@ const JobByEmail = (props: any) => {
                         <Form.Item
                             label={"Kỹ năng"}
                             name={"skills"}
-                            rules={[{ required: true, message: 'Vui lòng chọn ít nhất 1 skill!' }]}
-
+                        //rules={[{ required: true, message: 'Vui lòng chọn ít nhất 1 skill!' }]}
                         >
                             <Select
                                 mode="multiple"

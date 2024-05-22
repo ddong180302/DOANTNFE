@@ -139,10 +139,8 @@ const Header = (props: any) => {
     const itemsMobiles = [...items, ...itemsDropdown];
     const handleChat = () => {
         if (isAuthenticated) {
-            // Nếu đã đăng nhập, chuyển hướng người dùng đến trang tin nhắn và truyền tham số firstId và secondId
             navigate('/messages', { state: { userId } });
         } else {
-            // Nếu chưa đăng nhập, đưa người dùng đến trang đăng nhập
             navigate('/login');
         }
     };
@@ -152,9 +150,6 @@ const Header = (props: any) => {
                 <div className={styles["container"]}>
                     {!isMobile ?
                         <div style={{ display: "flex", gap: 30 }}>
-                            <div className={styles['brand']} >
-                                {/* <FaReact onClick={() => navigate('/')} title='Nice Job' /> */}
-                            </div>
                             <div className={styles['top-menu']}>
                                 <ConfigProvider
                                     theme={{
@@ -167,7 +162,6 @@ const Header = (props: any) => {
                                 >
 
                                     <Menu
-                                        // onClick={onClick}
                                         selectedKeys={[current]}
                                         mode="horizontal"
                                         items={items}

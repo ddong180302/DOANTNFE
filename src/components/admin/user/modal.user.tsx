@@ -71,6 +71,7 @@ const ModalUser = (props: IProps) => {
 
     const submitUser = async (valuesForm: any) => {
         const { name, email, password, address, age, gender, role, company, phone } = valuesForm;
+
         if (dataInit?._id) {
             //update
             if (role && role?.label !== "HR") {
@@ -85,6 +86,7 @@ const ModalUser = (props: IProps) => {
                         email,
                         password,
                         age,
+                        company: null as any,
                         gender,
                         address,
                         phone,
@@ -110,6 +112,7 @@ const ModalUser = (props: IProps) => {
                         age,
                         gender,
                         address,
+                        company: null as any,
                         phone,
                         role: role?.value
                     }
@@ -307,7 +310,6 @@ const ModalUser = (props: IProps) => {
     }
 
     const handleReset = async () => {
-        console.log("check")
         form.resetFields();
         form.setFieldsValue(null);
         setDataInit(null);
@@ -383,7 +385,17 @@ const ModalUser = (props: IProps) => {
                             disabled={dataInit?._id ? true : false}
                             label="Password"
                             name="password"
-                            rules={[{ required: dataInit?._id ? false : true, message: 'Vui lòng không bỏ trống' }]}
+                            rules={[
+                                {
+                                    required: dataInit?._id ? false : true,
+                                    message: 'Vui lòng không bỏ trống'
+                                },
+                                {
+                                    min: 6,
+                                    max: 12,
+                                    message: 'Mật khẩu phải có từ 6 đến 12 ký tự!'
+                                }
+                            ]}
                             placeholder="Nhập password"
                         />
                     </Col>
@@ -399,8 +411,12 @@ const ModalUser = (props: IProps) => {
                         <ProFormDigit
                             label="Tuổi"
                             name="age"
-                            rules={[{ required: true, message: 'Vui lòng không bỏ trống' }]}
+                            rules={[
+                                { required: true, message: 'Vui lòng không bỏ trống' },
+                                { type: 'number', min: 0, max: 99, message: 'Tuổi phải nhỏ hơn 100!' }
+                            ]}
                             placeholder="Nhập nhập tuổi"
+                            fieldProps={{ max: 99 }}
                         />
                     </Col>
                     <Col lg={6} md={6} sm={24} xs={24}>
@@ -416,52 +432,103 @@ const ModalUser = (props: IProps) => {
                             rules={[{ required: true, message: 'Vui lòng chọn giới tính!' }]}
                         />
                     </Col>
-                    <Col lg={6} md={6} sm={24} xs={24}>
-                        <ProForm.Item
-                            name="role"
-                            label="Vai trò"
-                            rules={[{ required: true, message: 'Vui lòng chọn vai trò!' }]}
+                    {
+                        dataInit &&
+                        <Col lg={6} md={6} sm={24} xs={24}>
+                            <ProForm.Item
+                                name="role"
+                                label="Vai trò"
+                                rules={[{ required: true, message: 'Vui lòng chọn vai trò!' }]}
+                            >
+                                <DebounceSelect
+                                    allowClear
+                                    showSearch
+                                    defaultValue={roles}
+                                    value={roles}
+                                    placeholder="Chọn vai trò"
+                                    fetchOptions={fetchRoleList}
+                                    onChange={(newValue: any) => {
+                                        setRoles(newValue ? [newValue] : []);
+                                    }}
+                                    style={{ width: '100%' }}
+                                    disabled
+                                />
+                            </ProForm.Item>
+                        </Col>
+                    }
 
-                        >
-                            <DebounceSelect
-                                allowClear
-                                showSearch
-                                defaultValue={roles}
-                                value={roles}
-                                placeholder="Chọn vai trò"
-                                fetchOptions={fetchRoleList}
-                                onChange={(newValue: any) => {
-                                    if (newValue?.length === 0 || newValue?.length === 1) {
-                                        setRoles(newValue as ICompanySelect[]);
-                                    }
-                                }}
-                                style={{ width: '100%' }}
-                            />
-                        </ProForm.Item>
+                    {
+                        dataInit &&
+                        <Col lg={12} md={12} sm={24} xs={24}>
+                            <ProForm.Item
+                                name="company"
+                                label="Thuộc Công Ty"
+                                rules={[{ required: false, message: 'Vui lòng chọn company!' }]}
+                            >
+                                <DebounceSelect
+                                    allowClear
+                                    showSearch
+                                    defaultValue={companies}
+                                    value={companies}
+                                    placeholder="Chọn công ty"
+                                    fetchOptions={fetchCompanyList}
+                                    onChange={(newValue: any) => {
+                                        setCompanies(newValue ? [newValue] : []);
+                                    }}
+                                    style={{ width: '100%' }}
+                                    disabled
+                                />
+                            </ProForm.Item>
+                        </Col>
+                    }
+                    {
+                        !dataInit &&
+                        <Col lg={6} md={6} sm={24} xs={24}>
+                            <ProForm.Item
+                                name="role"
+                                label="Vai trò"
+                                rules={[{ required: true, message: 'Vui lòng chọn vai trò!' }]}
+                            >
+                                <DebounceSelect
+                                    allowClear
+                                    showSearch
+                                    defaultValue={roles}
+                                    value={roles}
+                                    placeholder="Chọn vai trò"
+                                    fetchOptions={fetchRoleList}
+                                    onChange={(newValue: any) => {
+                                        setRoles(newValue ? [newValue] : []);
+                                    }}
+                                    style={{ width: '100%' }}
+                                />
+                            </ProForm.Item>
+                        </Col>
 
-                    </Col>
-                    <Col lg={12} md={12} sm={24} xs={24}>
-                        <ProForm.Item
-                            name="company"
-                            label="Thuộc Công Ty"
-                            rules={[{ required: false, message: 'Vui lòng chọn company!' }]}
-                        >
-                            <DebounceSelect
-                                allowClear
-                                showSearch
-                                defaultValue={companies}
-                                value={companies}
-                                placeholder="Chọn công ty"
-                                fetchOptions={fetchCompanyList}
-                                onChange={(newValue: any) => {
-                                    if (newValue?.length === 0 || newValue?.length === 1) {
-                                        setCompanies(newValue as ICompanySelect[]);
-                                    }
-                                }}
-                                style={{ width: '100%' }}
-                            />
-                        </ProForm.Item>
-                    </Col>
+                    }
+
+                    {
+                        !dataInit &&
+                        <Col lg={12} md={12} sm={24} xs={24}>
+                            <ProForm.Item
+                                name="company"
+                                label="Thuộc Công Ty"
+                                rules={[{ required: false, message: 'Vui lòng chọn company!' }]}
+                            >
+                                <DebounceSelect
+                                    allowClear
+                                    showSearch
+                                    defaultValue={companies}
+                                    value={companies}
+                                    placeholder="Chọn công ty"
+                                    fetchOptions={fetchCompanyList}
+                                    onChange={(newValue: any) => {
+                                        setCompanies(newValue ? [newValue] : []);
+                                    }}
+                                    style={{ width: '100%' }}
+                                />
+                            </ProForm.Item>
+                        </Col>
+                    }
                     <Col lg={12} md={12} sm={24} xs={24}>
                         <ProFormText
                             label="Địa chỉ"
@@ -474,7 +541,18 @@ const ModalUser = (props: IProps) => {
                         <ProFormText
                             label="Số điện thoại"
                             name="phone"
-                            rules={[{ required: true, message: 'Vui lòng không bỏ trống' }]}
+                            rules={[
+                                { required: true, message: 'Vui lòng không bỏ trống' },
+                                {
+                                    pattern: /^[0-9]+$/,
+                                    message: 'Vui lòng chỉ nhập số điện thoại!'
+                                },
+                                {
+                                    min: 10,
+                                    max: 11,
+                                    message: 'Số điện thoại phải có từ 10 đến 11 số!'
+                                }
+                            ]}
                             placeholder="Nhập số điện thoại"
                         />
                     </Col>

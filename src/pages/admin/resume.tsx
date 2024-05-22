@@ -50,8 +50,8 @@ const ResumePage = () => {
             render: (text, record, index, action) => {
                 return (
                     <a href="#" onClick={() => {
-                        //setOpenViewDetail(true);
-                        // setDataInit(record);
+                        setOpenViewDetail(true);
+                        setDataInit(record);
                     }}>
                         {record._id}
                     </a>

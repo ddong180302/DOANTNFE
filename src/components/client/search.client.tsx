@@ -52,7 +52,6 @@ const SearchClient = (props: IProps) => {
     const fetchJob = async () => {
         setIsLoading(true)
         let query = `current=${current}&pageSize=${pageSize}`;
-        console.log("check filter: ", filter)
         if (filter) {
             query += `&${filter}`;
         }
@@ -60,7 +59,6 @@ const SearchClient = (props: IProps) => {
             query += `&${sortQuery}`;
         }
 
-        console.log("check query: ", query)
         const res = await callFetchJob(query);
         if (res && res.data) {
             setDisplayJob(res.data.result);
@@ -81,12 +79,11 @@ const SearchClient = (props: IProps) => {
                 if (res && res.data) {
 
                     const transformedSkills = res?.data?.result.map(skill => ({
-                        label: skill.name, // Assuming 'name' is the skill name
-                        value: skill.name, // Remove spaces and convert to uppercase
+                        label: skill.name,
+                        value: skill.name,
                     }));
 
                     setSkills(transformedSkills);
-                    //setTotal(res.data.meta.total);
                 }
                 setIsLoading(false)
 
@@ -119,15 +116,10 @@ const SearchClient = (props: IProps) => {
     const onFinish = async (values: any) => {
         const { skills, location } = values;
 
-        console.log("check values: ", values)
-
-        // Xử lý filter cho kỹ năng
         const skillsFilter = skills && skills.length > 0 ? `skills=${skills.join(',')}` : '';
 
-        // Xử lý filter cho địa điểm
         const locationFilter = location && location.length > 0 ? `location=${location.join(',')}` : '';
 
-        // Ghép các filter lại với nhau
         const filterQuery = [skillsFilter, locationFilter].filter(Boolean).join('&');
 
         setFilter(filterQuery);
@@ -173,7 +165,7 @@ const SearchClient = (props: IProps) => {
                                                                     <div className={styles["job-title"]}>{item.name}</div>
                                                                     <div className={styles["job-location"]}><EnvironmentOutlined style={{ color: '#58aaab' }} />&nbsp;{getLocationName(item.location)}</div>
                                                                     <div><ThunderboltOutlined style={{ color: 'orange' }} />&nbsp;{(item.salary + "")?.replace(/\B(?=(\d{3})+(?!\d))/g, ',')} đ</div>
-                                                                    <div className={styles["job-updatedAt"]}>{dayjs(item.updatedAt).fromNow()}</div>
+                                                                    <div className={styles["job-updatedAt"]}>{dayjs(item.createdAt).fromNow()}</div>
                                                                 </div>
                                                             </div>
 

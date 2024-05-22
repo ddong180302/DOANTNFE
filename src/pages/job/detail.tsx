@@ -30,8 +30,6 @@ const ClientJobDetailPage = (props: any) => {
     const userRole = user?.role?.name;
     const navigate = useNavigate();
 
-    console.log("check detail userId: ", userId)
-
     useEffect(() => {
         const init = async () => {
             if (id && !jobDetail) {

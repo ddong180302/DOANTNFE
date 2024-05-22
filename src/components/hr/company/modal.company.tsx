@@ -12,6 +12,7 @@ import { v4 as uuidv4 } from 'uuid';
 import enUS from 'antd/lib/locale/en_US';
 import countryList, { Country } from 'country-list';
 import { DebounceSelect } from "@/components/admin/skill/debouce.select";
+import { LOCATION_LIST } from "@/config/utils";
 
 interface IProps {
     openModal: boolean;
@@ -71,7 +72,6 @@ const ModalCompany = (props: IProps) => {
         option.children.toLowerCase().indexOf(inputValue.toLowerCase()) >= 0;
 
 
-    // Usage of DebounceSelect
     async function fetchSkillList(name: string): Promise<ISkillSelect[]> {
         const res = await callFetchSkill(`current=1&pageSize=100&name=/${name}/i`);
         if (res && res.data) {
@@ -94,7 +94,6 @@ const ModalCompany = (props: IProps) => {
         }
         const init = async () => {
             if (dataInit?._id) {
-                // Xử lý kỹ năng
                 const skillsData = dataInit?.ourkeyskills?.map((skill: any) => ({
                     label: skill,
                     value: skill,
@@ -103,7 +102,6 @@ const ModalCompany = (props: IProps) => {
 
                 setSkills(skillsData);
 
-                // Định dạng giá trị cho trường kỹ năng
                 const formattedSkills = dataInit?.ourkeyskills?.map((skill: any) => ({
                     label: skill,
                     value: skill,
@@ -113,18 +111,23 @@ const ModalCompany = (props: IProps) => {
                 form.setFieldsValue({
                     ...dataInit,
 
-                    skills: formattedSkills // Đặt giá trị cho trường skills
+                    skills: formattedSkills
                 });
+
+                // Set the logo data
+                if (dataInit?.logo) {
+                    setDataLogo([{
+                        name: dataInit.logo,
+                        uid: uuidv4()
+                    }]);
+                }
             }
         }
 
         init();
         return () => {
             form.resetFields();
-            //setValue("");
-            //setDataInit(null);
-            //setSkills([]);
-            setResetData(true); // Set resetData thành true để reset dữ liệu
+            setResetData(true);
         };
 
     }, [dataInit, form]);
@@ -135,7 +138,6 @@ const ModalCompany = (props: IProps) => {
             companySize, workingDays,
             overtimePolicy, ourkeyskills
         } = valuesForm;
-        //const valuesSkill = ourkeyskills.map((item: any) => item.label);
         const valuesSkill = ourkeyskills.map((item: any) => {
             if (item && item?.label) {
                 return item.label;
@@ -158,9 +160,9 @@ const ModalCompany = (props: IProps) => {
                 setResetData(true);
                 handleReset();
 
-                const updatedCompanyRes = await callGetCompanyByUser(); // Gọi API để lấy thông tin công ty sau khi cập nhật
+                const updatedCompanyRes = await callGetCompanyByUser();
                 if (updatedCompanyRes?.data) {
-                    setDataInit(updatedCompanyRes.data); // Cập nhật lại dataInit với dữ liệu mới nhất
+                    setDataInit(updatedCompanyRes.data);
                 }
             } else {
                 notification.error({
@@ -175,7 +177,7 @@ const ModalCompany = (props: IProps) => {
         form.resetFields();
         const updatedCompanyRes = await callGetCompanyByUser();
         if (updatedCompanyRes?.data) {
-            setDataInit(updatedCompanyRes.data); // Cập nhật lại dataInit với dữ liệu mới nhất
+            setDataInit(updatedCompanyRes.data);
         }
         setAnimation('close')
         await new Promise(r => setTimeout(r, 400))
@@ -183,7 +185,7 @@ const ModalCompany = (props: IProps) => {
         setAnimation('open')
         setResetData(true);
         if (afterCloseModal) {
-            afterCloseModal(); // Gọi hàm callback khi modal được đóng
+            afterCloseModal();
         }
     }
 
@@ -347,14 +349,12 @@ const ModalCompany = (props: IProps) => {
                             </Col>
 
                             <Col span={16}>
-                                <ProFormTextArea
-                                    label="Địa chỉ"
+                                <ProFormSelect
                                     name="address"
-                                    rules={[{ required: true, message: 'Vui lòng không bỏ trống' }]}
-                                    placeholder="Nhập địa chỉ công ty"
-                                    fieldProps={{
-                                        autoSize: { minRows: 4 }
-                                    }}
+                                    label="Địa điểm"
+                                    options={LOCATION_LIST.filter(item => item.value !== 'ALL')}
+                                    placeholder="Please select a location"
+                                    rules={[{ required: true, message: 'Vui lòng chọn địa điểm!' }]}
                                 />
                             </Col>
                             <Col span={8}>

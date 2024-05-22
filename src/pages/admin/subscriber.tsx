@@ -7,12 +7,13 @@ import { ActionType, ProColumns } from '@ant-design/pro-components';
 import { Button, Popconfirm, Space, Tag, message, notification } from "antd";
 import { useState, useRef } from 'react';
 import dayjs from 'dayjs';
-import { callDeleteUser } from "@/config/api";
+import { callDeleteSubscriber, callDeleteUser } from "@/config/api";
 import queryString from 'query-string';
 // import ModalUser from "@/components/admin/subscriber/modal.subscriber";
 // import ViewDetailUser from "@/components/admin/subscriber/view.subscriber";
 import Access from "@/components/share/access";
 import { ALL_PERMISSIONS } from "@/config/permissions";
+import ViewDetailSubcriber from "@/components/admin/subscriber/view.subcriber";
 
 const SubscriberPage = () => {
     const [openModal, setOpenModal] = useState<boolean>(false);
@@ -26,11 +27,11 @@ const SubscriberPage = () => {
     const subscribers = useAppSelector(state => state.subscriber.result);
     const dispatch = useAppDispatch();
 
-    const handleDeleteUser = async (_id: string | undefined) => {
+    const handleDeleteSubcriber = async (_id: string | undefined) => {
         if (_id) {
-            const res = await callDeleteUser(_id);
+            const res = await callDeleteSubscriber(_id);
             if (res && res.data) {
-                message.success('Xóa User thành công');
+                message.success('Xóa subcriber thành công');
                 reloadTable();
             } else {
                 notification.error({
@@ -143,15 +144,15 @@ const SubscriberPage = () => {
         //                     }}
         //                 />
         //             </Access>
-        //             <Access
-        //                 permission={ALL_PERMISSIONS.USERS.DELETE}
+        //             {/* <Access
+        //                 permission={ALL_PERMISSIONS.SUBSCRIBERS.DELETE}
         //                 hideChildren
         //             >
         //                 <Popconfirm
         //                     placement="leftTop"
         //                     title={"Xác nhận xóa subscriber"}
         //                     description={"Bạn có chắc chắn muốn xóa subscriber này ?"}
-        //                     onConfirm={() => handleDeleteUser(entity._id)}
+        //                     onConfirm={() => handleDeleteSubcriber(entity._id)}
         //                     okText="Xác nhận"
         //                     cancelText="Hủy"
         //                 >
@@ -164,10 +165,9 @@ const SubscriberPage = () => {
         //                         />
         //                     </span>
         //                 </Popconfirm>
-        //             </Access>
+        //             </Access> */}
         //         </Space>
         //     ),
-
         // },
     ];
 
@@ -242,6 +242,13 @@ const SubscriberPage = () => {
                 // }}
                 />
             </Access>
+
+            <ViewDetailSubcriber
+                onClose={setOpenViewDetail}
+                open={openViewDetail}
+                dataInit={dataInit}
+                setDataInit={setDataInit}
+            />
         </div>
     )
 }

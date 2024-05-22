@@ -12,7 +12,7 @@ import queryString from 'query-string';
 import ModalSkill from "@/components/admin/skill/modal.skill";
 import Access from "@/components/share/access";
 import { ALL_PERMISSIONS } from "@/config/permissions";
-import ViewDetailSkill from "@/components/admin/skill/view.user";
+import ViewDetailSkill from "@/components/admin/skill/view.skill";
 
 const SkillPage = () => {
     const [openModal, setOpenModal] = useState<boolean>(false);

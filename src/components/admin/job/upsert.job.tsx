@@ -31,6 +31,8 @@ const ViewUpsertJob = (props: any) => {
     const [dataUpdate, setDataUpdate] = useState<IJob | null>(null);
     const [form] = Form.useForm();
 
+    console.log("check data: ", dataUpdate)
+
     useEffect(() => {
         const init = async () => {
             if (id) {
@@ -64,8 +66,6 @@ const ViewUpsertJob = (props: any) => {
                     const expiredAtDate = new Date(res.data.expiredAt);
                     const formattedExpiredAt = `${expiredAtDate.getDate().toString().padStart(2, '0')}/${(expiredAtDate.getMonth() + 1).toString().padStart(2, '0')}/${expiredAtDate.getFullYear()}`;
 
-
-
                     form.setFieldsValue({
                         ...res.data,
                         company: {
@@ -82,6 +82,7 @@ const ViewUpsertJob = (props: any) => {
         init();
         return () => form.resetFields();
     }, [id]);
+
     async function fetchCompanyList(name: string): Promise<ICompanySelect[]> {
         const res = await callFetchCompany(`current=1&pageSize=100&name=/${name}/i`);
         if (res && res.data) {
@@ -147,17 +148,6 @@ const ViewUpsertJob = (props: any) => {
 
     }
 
-
-    const handleDurationChange = (e: any) => {
-        const selectedDuration = e.target.value;
-        const calculatedExpirationDate = dayjs().add(selectedDuration, 'day').toDate();
-        const expirationDateObj = dayjs(calculatedExpirationDate);
-        const formattedExpirationDate = expirationDateObj.format('DD/MM/YYYY');
-
-        form.setFieldsValue({
-            expiredAt: formattedExpirationDate,
-        });
-    };
 
     return (
         <div className={styles["upsert-job-container"]}>
@@ -296,6 +286,7 @@ const ViewUpsertJob = (props: any) => {
                                                 }
                                             }}
                                             style={{ width: '100%' }}
+                                            disabled={!!dataUpdate?._id}
                                         />
                                     </ProForm.Item>
                                 </Col>
@@ -304,22 +295,6 @@ const ViewUpsertJob = (props: any) => {
                         </Row>
 
                         <Row gutter={[20, 20]}>
-                            {!id &&
-                                <Col span={24} md={6}>
-                                    <Form.Item
-                                        label="Thời hạn (ngày)"
-                                        name="duration"
-                                        rules={[{ required: true, message: 'Vui lòng chọn thời hạn!' }]}
-                                    >
-                                        <Radio.Group onChange={handleDurationChange}>
-                                            <Radio.Button value={15}>15</Radio.Button>
-                                            <Radio.Button value={30}>30</Radio.Button>
-                                            <Radio.Button value={45}>45</Radio.Button>
-                                            <Radio.Button value={60}>60</Radio.Button>
-                                        </Radio.Group>
-                                    </Form.Item>
-                                </Col>
-                            }
                             <Col span={24} md={6}>
                                 <Form.Item
                                     label="Ngày hết hạn"

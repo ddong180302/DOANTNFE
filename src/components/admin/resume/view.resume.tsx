@@ -17,25 +17,25 @@ const ViewDetailResume = (props: IProps) => {
     const { onClose, open, dataInit, setDataInit, reloadTable } = props;
     const [form] = Form.useForm();
 
-    const handleChangeStatus = async () => {
-        setIsSubmit(true);
+    // const handleChangeStatus = async () => {
+    //     setIsSubmit(true);
 
-        const status = form.getFieldValue('status');
-        const res = await callUpdateResumeStatus(dataInit?._id, status)
-        if (res.data) {
-            message.success("Update Resume status thành công!");
-            setDataInit(null);
-            onClose(false);
-            reloadTable();
-        } else {
-            notification.error({
-                message: 'Có lỗi xảy ra',
-                description: res.message
-            });
-        }
+    //     const status = form.getFieldValue('status');
+    //     const res = await callUpdateResumeStatus(dataInit?._id, status)
+    //     if (res.data) {
+    //         message.success("Update Resume status thành công!");
+    //         setDataInit(null);
+    //         onClose(false);
+    //         reloadTable();
+    //     } else {
+    //         notification.error({
+    //             message: 'Có lỗi xảy ra',
+    //             description: res.message
+    //         });
+    //     }
 
-        setIsSubmit(false);
-    }
+    //     setIsSubmit(false);
+    // }
 
     useEffect(() => {
         if (dataInit) {
@@ -54,37 +54,18 @@ const ViewDetailResume = (props: IProps) => {
                 width={"40vw"}
                 maskClosable={false}
                 destroyOnClose
-                extra={
+            // extra={
 
-                    <Button loading={isSubmit} type="primary" onClick={handleChangeStatus}>
-                        Change Status
-                    </Button>
+            //     // <Button loading={isSubmit} type="primary" onClick={handleChangeStatus}>
+            //     //     Change Status
+            //     // </Button>
 
-                }
+            // }
             >
                 <Descriptions title="" bordered column={2} layout="vertical">
                     <Descriptions.Item label="Email">{dataInit?.email}</Descriptions.Item>
                     <Descriptions.Item label="Trạng thái">
-                        <Form
-                            form={form}
-                        >
-                            <Form.Item name={"status"}>
-                                <Select
-                                    // placeholder="Select a option and change input text above"
-                                    // onChange={onGenderChange}
-                                    // allowClear
-                                    popupMatchSelectWidth
-                                    style={{ width: "100%" }}
-                                    defaultValue={dataInit?.status}
-                                >
-                                    <Option value="PENDING">PENDING</Option>
-                                    <Option value="REVIEWING">REVIEWING</Option>
-                                    <Option value="APPROVED">APPROVED</Option>
-                                    <Option value="REJECTED">REJECTED</Option>
-                                </Select>
-                            </Form.Item>
-                        </Form>
-
+                        {dataInit?.status}
                     </Descriptions.Item>
                     <Descriptions.Item label="Tên Job">
                         {dataInit?.jobId?.name}

@@ -11,6 +11,7 @@ import { fetchResume } from "@/redux/slice/resumeSlide";
 import ViewDetailResume from "@/components/admin/resume/view.resume";
 import { ALL_PERMISSIONS } from "@/config/permissions";
 import Access from "@/components/share/access";
+import ViewDetailResumeHr from "@/components/hr/resume/view.resume";
 
 const ResumePageHr = () => {
     const tableRef = useRef<ActionType>();
@@ -240,7 +241,7 @@ const ResumePageHr = () => {
                     }}
                 />
             </Access>
-            <ViewDetailResume
+            <ViewDetailResumeHr
                 open={openViewDetail}
                 onClose={setOpenViewDetail}
                 dataInit={dataInit}

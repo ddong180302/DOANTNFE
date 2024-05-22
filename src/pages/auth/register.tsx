@@ -5,6 +5,7 @@ import { callRegister } from 'config/api';
 import styles from 'styles/auth.module.scss';
 import { IUser } from '@/types/backend';
 import ConfirmPage from './confirm';
+import { ProFormDigit } from '@ant-design/pro-components';
 const { Option } = Select;
 
 
@@ -89,31 +90,37 @@ const RegisterPage = () => {
                                 >
                                     <Input.Password />
                                 </Form.Item>
+
+
                                 <Form.Item
-                                    labelCol={{ span: 24 }} //whole column
+                                    labelCol={{ span: 24 }}
                                     label="Tuổi"
                                     name="age"
-                                    rules={[{ required: true, message: 'Tuổi không được để trống!' }]}
+                                    rules={[
+                                        { required: true, message: 'Tuổi không được để trống!' },
+                                        { type: 'number', min: 0, max: 99, message: 'Tuổi phải nhỏ hơn 100!' }
+                                    ]}
                                 >
-                                    <Input type='number' />
+                                    <ProFormDigit
+                                        placeholder="Nhập số tuổi"
+                                        fieldProps={{ max: 99 }}
+                                    />
                                 </Form.Item>
 
 
                                 <Form.Item
-                                    labelCol={{ span: 24 }} //whole column
+                                    labelCol={{ span: 24 }}
                                     name="gender"
                                     label="Giới tính"
                                     rules={[{ required: true, message: 'Giới tính không được để trống!' }]}
                                 >
                                     <Select
-                                        // placeholder="Select a option and change input text above"
-                                        // onChange={onGenderChange}
                                         allowClear
                                         popupMatchSelectWidth
                                     >
-                                        <Option value="male">Nam</Option>
-                                        <Option value="female">Nữ</Option>
-                                        <Option value="other">Khác</Option>
+                                        <Option value="MALE">Nam</Option>
+                                        <Option value="FEMALE">Nữ</Option>
+                                        <Option value="OTHER">Khác</Option>
                                     </Select>
                                 </Form.Item>
 
@@ -138,6 +145,11 @@ const RegisterPage = () => {
                                         {
                                             pattern: /^[0-9]+$/,
                                             message: 'Vui lòng chỉ nhập số điện thoại!'
+                                        },
+                                        {
+                                            min: 10,
+                                            max: 11,
+                                            message: 'Số điện thoại phải có từ 10 đến 11 số!'
                                         }
                                     ]}
                                 >

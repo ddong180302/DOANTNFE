@@ -158,7 +158,6 @@ const UserPage = () => {
 
     const buildQuery = (params: any, sort: any, filter: any) => {
         const clone = { ...params };
-        console.log("check clone: ", clone);
         if (clone.name) clone.name = `/${clone.name}/i`;
         if (clone.email) clone.email = `/${clone.email}/i`;
 
