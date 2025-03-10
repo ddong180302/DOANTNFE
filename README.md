@@ -1,4 +1,4 @@
-### Source code frontend cho backend Nest.JS - Đồ án tốt nghiệp
+### Source code frontend cho backend Nest.JS
 Tác giả: Trần Đăng Đông
 
 Các bước cài đặt: (chế độ development)
